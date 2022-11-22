@@ -32,14 +32,19 @@ public class CardDeck {
     }
 
 
-    public void populateDeck(Card card) {
-        /**
-         * Add a card to the top of this deck.
-         * (Append "card" to the top of "cards").
-         * 
-         */
+    /**
+     * addCard method. Adds a card to the top of the deck.
+     * 
+     * @author Miles Edwards
+     * @version 1.0
+     * @param c card to be added to the deck.
+     * 
+     */
+    public void addCard(Card c) {
+        cards.add(c);
     }
 
+    
     public Card popFromTop() {
         /**
          * Pops a card from the top of "cards"
@@ -50,6 +55,7 @@ public class CardDeck {
          */
         return new Card();
     }
+    
 
     public void appendToBottom(Card card) {
         /**
