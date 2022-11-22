@@ -19,6 +19,7 @@ public class CardDeck {
     public CardDeck() {
         deckCount++;
         deckNumber = deckCount;
+        cards = new ArrayList<Card>();
     }
 
 
