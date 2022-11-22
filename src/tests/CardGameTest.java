@@ -1,6 +1,7 @@
 package tests;
 
 import org.junit.Test;
+import cards.CardGame;
 import static org.junit.Assert.*;
 
 /**
@@ -13,8 +14,11 @@ import static org.junit.Assert.*;
 public class CardGameTest {
 
     @Test
-    public void testSomething() {
-        assertEquals(getClass(), getClass());
+    public void testConstructor() {
+        CardGame gameTest = new CardGame(4);
+        assertEquals(4, gameTest.getPlayers().size());
+        assertEquals(4, gameTest.getDecks().size());
+        assertEquals(32, gameTest.getPack().size());
     }
     
 }

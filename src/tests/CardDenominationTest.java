@@ -15,37 +15,37 @@ public class CardDenominationTest {
 
     @Test
     public void testGetValue() {
-        assertEquals(CardDenomination.ACE.getValue(), 1);
-        assertEquals(CardDenomination.TWO.getValue(), 2);
-        assertEquals(CardDenomination.THREE.getValue(), 3);
-        assertEquals(CardDenomination.FOUR.getValue(), 4);
-        assertEquals(CardDenomination.FIVE.getValue(), 5);
-        assertEquals(CardDenomination.SIX.getValue(), 6);
-        assertEquals(CardDenomination.SEVEN.getValue(), 7);
-        assertEquals(CardDenomination.EIGHT.getValue(), 8);
-        assertEquals(CardDenomination.NINE.getValue(), 9);
-        assertEquals(CardDenomination.TEN.getValue(), 10);
-        assertEquals(CardDenomination.JACK.getValue(), 11);
-        assertEquals(CardDenomination.QUEEN.getValue(), 12);
-        assertEquals(CardDenomination.KING.getValue(), 13);
+        assertEquals(1, CardDenomination.ACE.getValue());
+        assertEquals(2, CardDenomination.TWO.getValue());
+        assertEquals(3, CardDenomination.THREE.getValue());
+        assertEquals(4, CardDenomination.FOUR.getValue());
+        assertEquals(5, CardDenomination.FIVE.getValue());
+        assertEquals(6, CardDenomination.SIX.getValue());
+        assertEquals(7, CardDenomination.SEVEN.getValue());
+        assertEquals(8, CardDenomination.EIGHT.getValue());
+        assertEquals(9, CardDenomination.NINE.getValue());
+        assertEquals(10, CardDenomination.TEN.getValue());
+        assertEquals(11, CardDenomination.JACK.getValue());
+        assertEquals(12, CardDenomination.QUEEN.getValue());
+        assertEquals(13, CardDenomination.KING.getValue());
     }
 
 
     @Test
     public void testValueOf() {
-        assertEquals(CardDenomination.valueOf(1), CardDenomination.ACE);
-        assertEquals(CardDenomination.valueOf(2), CardDenomination.TWO);
-        assertEquals(CardDenomination.valueOf(3), CardDenomination.THREE);
-        assertEquals(CardDenomination.valueOf(4), CardDenomination.FOUR);
-        assertEquals(CardDenomination.valueOf(5), CardDenomination.FIVE);
-        assertEquals(CardDenomination.valueOf(6), CardDenomination.SIX);
-        assertEquals(CardDenomination.valueOf(7), CardDenomination.SEVEN);
-        assertEquals(CardDenomination.valueOf(8), CardDenomination.EIGHT);
-        assertEquals(CardDenomination.valueOf(9), CardDenomination.NINE);
-        assertEquals(CardDenomination.valueOf(10), CardDenomination.TEN);
-        assertEquals(CardDenomination.valueOf(11), CardDenomination.JACK);
-        assertEquals(CardDenomination.valueOf(12), CardDenomination.QUEEN);
-        assertEquals(CardDenomination.valueOf(13), CardDenomination.KING);
+        assertEquals(CardDenomination.ACE, CardDenomination.valueOf(1));
+        assertEquals(CardDenomination.TWO, CardDenomination.valueOf(2));
+        assertEquals(CardDenomination.THREE, CardDenomination.valueOf(3));
+        assertEquals(CardDenomination.FOUR, CardDenomination.valueOf(4));
+        assertEquals(CardDenomination.FIVE, CardDenomination.valueOf(5));
+        assertEquals(CardDenomination.SIX, CardDenomination.valueOf(6));
+        assertEquals(CardDenomination.SEVEN, CardDenomination.valueOf(7));
+        assertEquals(CardDenomination.EIGHT, CardDenomination.valueOf(8));
+        assertEquals(CardDenomination.NINE, CardDenomination.valueOf(9));
+        assertEquals(CardDenomination.TEN, CardDenomination.valueOf(10));
+        assertEquals(CardDenomination.JACK, CardDenomination.valueOf(11));
+        assertEquals(CardDenomination.QUEEN, CardDenomination.valueOf(12));
+        assertEquals(CardDenomination.KING, CardDenomination.valueOf(13));
     }
     
 }
