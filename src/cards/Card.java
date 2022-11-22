@@ -19,6 +19,10 @@ public class Card {
          * Picking a random number between 1 and 13.
          * Using CardDenomination method: "valueOf" to assign
          * "denomination" with a CardDenomination.
+         * denomination = CardDenomination.valueOf(new Random().nextInt(13) + 1);
+         * 
+         * Will eventually become depreciated once file system
+         * is implemented. Replaced by public Card(CardDenomination d) {}
          * 
          */
     }
