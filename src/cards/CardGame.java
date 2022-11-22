@@ -61,6 +61,10 @@ public class CardGame {
         return pack;
     }
 
+    public int getPlayerTurn() {
+        return playerTurn;
+    }
+
 
     /**
      * dealHands method. Iterates 4 times representing the size
