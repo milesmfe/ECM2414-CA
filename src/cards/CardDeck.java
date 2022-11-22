@@ -32,15 +32,12 @@ public class CardDeck {
     }
 
 
-    public ArrayList<Card> populateDeck(ArrayList<Card> pack) {
+    public void populateDeck(Card card) {
         /**
-         * Pops 4 cards from top (i=n-1) of "pack".
-         * Creates list of cards from these 4.
-         * Sets "cards" to this list.
-         * Returns the pack now with 4 fewer cards.
+         * Add a card to the top of this deck.
+         * (Append "card" to the top of "cards").
          * 
          */
-        return pack;
     }
 
     public Card popFromTop() {
