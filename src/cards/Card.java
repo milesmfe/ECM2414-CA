@@ -35,10 +35,6 @@ public class Card {
 
 
     // Set methods
-    public void setDenomination(CardDenomination d) {
-        denomination = d;
-    }
-
     public void setVolatility(int v) {
         volatility = v;
     }
