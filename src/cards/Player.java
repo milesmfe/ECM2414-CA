@@ -245,12 +245,12 @@ public class Player extends Thread {
     @Override
     public synchronized void run() {
         // -- Print hand dealt -- //
-        System.out.println(String.format("player %o initial hand %s %s %s %s",
+        System.out.println(String.format("player %d initial hand %s %s %s %s",
         playerNumber,
         hand[0].getDenomination().name(), hand[1].getDenomination().name(),
         hand[2].getDenomination().name(), hand[3].getDenomination().name()));
         // -- Immediately check whether player has won, if so declare this -- //
-        if (checkHand()) { System.out.println(String.format("Player %o wins", playerNumber)); }
+        if (checkHand()) { System.out.println(String.format("Player %d wins", playerNumber)); }
         // -- Loop game logic until game status changes -- //
         while (game.getStatus() == GameStatus.SETUP_ACTIVE) {
             // -- Check that both decks either side of player are not empty -- //
@@ -260,14 +260,14 @@ public class Player extends Thread {
                 // -- If player wins -- //
                 if (checkHand()) {
                     game.declareWinnerAs(playerNumber);
-                    System.out.println(String.format("player %o wins", playerNumber));
-                    System.out.println(String.format("player %o final hand %s %s %s %s",
+                    System.out.println(String.format("player %d wins", playerNumber));
+                    System.out.println(String.format("player %d final hand %s %s %s %s",
                     playerNumber,
                     hand[0].getDenomination().name(), hand[1].getDenomination().name(),
                     hand[2].getDenomination().name(),hand[3].getDenomination().name()));
                 }
                 // -- Print current hand -- //
-                System.out.println(String.format("player %o current hand is %s %s %s %s",
+                System.out.println(String.format("player %d current hand is %s %s %s %s",
                 playerNumber,
                 hand[0].getDenomination().name(), hand[1].getDenomination().name(),
                 hand[2].getDenomination().name(), hand[3].getDenomination().name()));
@@ -276,8 +276,8 @@ public class Player extends Thread {
         if (game.getWinningPlayer() != this) {
             // -- If player didn't win -- //
             Player winningPlayer = game.getWinningPlayer();
-            System.out.println(String.format("player %o wins", winningPlayer.getPlayerNumber()));
-                    System.out.println(String.format("player %o final hand %s %s %s %s",
+            System.out.println(String.format("player %d wins", winningPlayer.getPlayerNumber()));
+                    System.out.println(String.format("player %d final hand %s %s %s %s",
                     winningPlayer.getPlayerNumber(),
                     winningPlayer.getCardAt(0).getDenomination().name(), winningPlayer.getCardAt(1).getDenomination().name(),
                     winningPlayer.getCardAt(2).getDenomination().name(), winningPlayer.getCardAt(3).getDenomination().name()));
