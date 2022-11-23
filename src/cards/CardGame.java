@@ -3,6 +3,7 @@ package cards;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 
 /**
  * CardGame class.
@@ -87,7 +88,6 @@ public class CardGame {
         try {
             FileWriter fw = new FileWriter(String.format("src/packs/%s.txt", n));
             for (Card card : pack) {
-                System.out.println(card.getDenomination().getValue());
                 fw.write(String.format("%d\n", card.getDenomination().getValue()));
             }
             fw.close();
@@ -364,6 +364,7 @@ public class CardGame {
     public void startGame() {
         if (getStatus() == GameStatus.SETUP_IDLE) {
             status = GameStatus.SETUP_ACTIVE;
+            Collections.shuffle(playerList);
             for (Player player : playerList) {
                 player.start();
             }
