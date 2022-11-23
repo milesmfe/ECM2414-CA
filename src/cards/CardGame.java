@@ -231,6 +231,8 @@ public class CardGame {
      * declareWinnerAs method. Player threads should use this to declare
      * that they have a winning hand.
      * 
+     * @author Miles Edwards
+     * @version 1.0
      * @param p a specific player in the game.
      * @return true if player p wins, otherwise false.
      * 
