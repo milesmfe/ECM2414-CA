@@ -12,6 +12,7 @@ package cards;
 public class Player extends Thread {
     private static int playerCount = 0;
     private int playerNumber;
+    private CardGame game;
     private CardDenomination preferredDenomination;
     private Card[] hand = new Card[4];
     private Card discard;
@@ -24,12 +25,14 @@ public class Player extends Thread {
      * 
      * @author Miles Edwards
      * @version 1.0
+     * @param g indicates the game this player is in.
      * 
      */
-    public Player() {
+    public Player(CardGame g) {
         playerCount++;
         playerNumber = playerCount;
         preferredDenomination = CardDenomination.valueOf(playerNumber);
+        game = g;
     }
 
 
@@ -208,10 +211,9 @@ public class Player extends Thread {
      */
     @Override
     public void run() {
-        /**
-         * Play the game according to spec.
-         * Should output moves, etc.
-         * Notify main thread when game is won.
-         */
+        pickCardFrom(game.deckLeftOf(playerNumber));
+        discardCardTo(game.deckRightOf(playerNumber));
+        updateHandVolatility();
+        if (checkHand()) { game.declareWinnerAs(playerNumber); }
     }
 }
