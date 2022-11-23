@@ -14,7 +14,6 @@ public class SequentialCardGameTest {
                 Player player = sequentialTestGame.getPlayer(currentPlayer);
                 player.pickCardFrom(player.getLeftDeck());
                 player.discardCardTo(player.getRightDeck());
-                player.updateHandVolatility();
                 if(player.checkHand()) { sequentialTestGame.declareWinnerAs(currentPlayer); }
                 System.out.println(String.format("Player %o says: This is my hand:", currentPlayer));
                 for (int j = 0; j < 4; j++) {
