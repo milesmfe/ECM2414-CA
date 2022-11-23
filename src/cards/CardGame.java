@@ -23,6 +23,38 @@ public class CardGame {
      * and proceeds to populate them with players,
      * decks and cards.
      * 
+     * Use this constructor to play a game with a specific
+     * pack (pack file needed).
+     * 
+     * @param n the number of players.
+     * @param pn the filename of the pack.
+     * @author Miles Edwards
+     * @version 1.1
+     * 
+    */
+    public CardGame(int n, String pn) {
+        numPlayers = n;
+        playerList = new ArrayList<Player>();
+        deckList = new ArrayList<CardDeck>();
+        pack = new ArrayList<Card>();
+
+        for (int i = 0; i < n; i++) {
+            playerList.add(new Player(this));
+            deckList.add(new CardDeck());
+        }
+        validatePack(pn);
+        pack = getPackFrom(pn);
+    }
+
+
+    /**
+     * CardGame constructor. Initialises ArrayLists
+     * and proceeds to populate them with players,
+     * decks and cards. 
+     * 
+     * Use this constructor to play a game with a random
+     * pack (no pack file needed).
+     * 
      * @param n The number of players
      * @author Miles Edwards
      * @version 1.0
@@ -46,6 +78,46 @@ public class CardGame {
              */
             pack.add(new Card());
         }
+    }
+
+
+    /**
+     * getPackFrom generates a pack of cards from a given file.
+     * 
+     * @author Miles Edwards
+     * @version 1.0
+     * 
+     * @param n file name.
+     * 
+     */
+    private ArrayList<Card> getPackFrom(String n) {
+        /**
+         * Call validate pack.
+         * Read from file named "n"
+         * Read one line at a time.
+         * Create a Card object with the integer per line.
+         * Return a generated ArrayList of these card objects.
+         */
+        return new ArrayList<Card>();
+    }
+
+
+    /**
+     * validatePack performs validation checks on a given
+     * pack file.
+     * 
+     * @author Miles Edwards
+     * @version 1.0
+     * 
+     * @param n file name.
+     * 
+     */
+    private void validatePack(String n) {    
+        /**
+         * Iterate through each line
+         * Ensure each line only contains an integer between 1 and 13 (inclusive)
+         * Check that there are 8n lines.
+         */
     }
 
 
@@ -278,7 +350,7 @@ public class CardGame {
 
 
     public static void main(String[] args) throws Exception {
-         /**
+          /**
          * This is the executable method.
          * 
          */
