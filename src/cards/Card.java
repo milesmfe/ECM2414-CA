@@ -12,7 +12,7 @@ import java.util.Random;
  * @version 1.0
  * 
  */
-public class Card extends Thread {
+public class Card {
     private CardDenomination denomination;
     private int volatility = 0;
 
