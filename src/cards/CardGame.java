@@ -80,13 +80,12 @@ public class CardGame {
              */
             pack.add(new Card());
         }
-        generatePackFile();
     }
 
 
-    private void generatePackFile() {
+    public void generatePackFile(String n) {
         try {
-            FileWriter fw = new FileWriter("test-pack-1");
+            FileWriter fw = new FileWriter(n);
             for (Card card : pack) {
                 System.out.println(card.getDenomination().getValue());
                 fw.write(String.format("%d\n", card.getDenomination().getValue()));
