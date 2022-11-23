@@ -34,7 +34,7 @@ public class CardGame {
         pack = new ArrayList<Card>();
 
         for (int i = 0; i < n; i++) {
-            playerList.add(new Player());
+            playerList.add(new Player(this));
             deckList.add(new CardDeck());
         }
         for (int i = 0; i < 8*n; i++) {
