@@ -5,7 +5,7 @@ import java.util.ArrayList;
 /**
  * CardDeck class. Each CardDeck has an array of cards.
  * 
- * @author Miles Edwards
+ * @author Miles Edwards, Shuhui Chen
  * @version 1.0
  * 
  */
@@ -54,7 +54,10 @@ public class CardDeck {
          * cards.get(cards.size()-1) will return the card
          * at the top of deck.
          */
-        return new Card();
+        Card poppedCard = cards.get(cards.size() - 1);
+        cards.remove(cards.size() - 1);
+        return poppedCard;
+        //return new Card();
     }
     
 
@@ -63,5 +66,6 @@ public class CardDeck {
          * Appends "card" to the bottom (i=0) of "card"
          * 
          */
+        cards.add(0, card);
     }
 }
