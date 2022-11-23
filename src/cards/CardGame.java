@@ -1,5 +1,7 @@
 package cards;
 
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 
 /**
@@ -77,6 +79,21 @@ public class CardGame {
              * appended.
              */
             pack.add(new Card());
+        }
+        generatePackFile();
+    }
+
+
+    private void generatePackFile() {
+        try {
+            FileWriter fw = new FileWriter("test-pack-1");
+            for (Card card : pack) {
+                System.out.println(card.getDenomination().getValue());
+                fw.write(String.format("%d\n", card.getDenomination().getValue()));
+            }
+            fw.close();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
