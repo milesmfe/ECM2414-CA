@@ -10,12 +10,11 @@ import java.util.ArrayList;
  * 
  */
 public class CardGame {
-    private static int numPlayers;
-    private static ArrayList<Player> playerList;
-    private static ArrayList<CardDeck> deckList;
-    private static ArrayList<Card> pack;
-    private static int playerTurn = 0;
-    private static Player winner;
+    private ArrayList<Player> playerList;
+    private ArrayList<CardDeck> deckList;
+    private ArrayList<Card> pack;
+    private int numPlayers = 0;
+    private boolean setupComplete = false;
 
     
     /**
@@ -49,21 +48,94 @@ public class CardGame {
     }
 
 
-    // Get methods (Used for testing)
+    /**
+     * getNumPlayers method.
+     * 
+     * @author Miles Edwards
+     * @version 1.0
+     * @return the number of players in the game.
+     * 
+     */
+    public int getNumPlayers() {
+        return numPlayers;
+    }
+
+
+    /**
+     * getStatus method.
+     * 
+     * @author Miles Edwards
+     * @version 1.0
+     * @return 1 if setup is complete, 0 if setup is not complete.
+     * 
+     */
+    public int getStatus() {
+        if (setupComplete) {
+            return 1;
+        } else {
+            return 0;
+        }
+    }
+
+
+    /**
+     * getPlayers method.
+     * 
+     * @author Miles Edwards
+     * @version 1.0
+     * @return the list of players in the game.
+     * 
+     */
     public ArrayList<Player> getPlayers() {
         return playerList;
     }
 
+
+    /**
+     * getDecks method.
+     * 
+     * @author Miles Edwards
+     * @version 1.0
+     * @return the list of decks in the game.
+     * 
+     */
     public ArrayList<CardDeck> getDecks() {
         return deckList;
     }
 
+
+    /**
+     * getPack method.
+     * 
+     * @author Miles Edwards
+     * @version 1.0
+     * @return the pack for the game.
+     * 
+     */
     public ArrayList<Card> getPack() {
         return pack;
     }
 
-    public int getPlayerTurn() {
-        return playerTurn;
+
+    /**
+     * setupGame method. Calls dealHands and populateDecks.
+     * Any issue is caught as a generic Exception.
+     * 
+     * @author Miles Edwards
+     * @version 1.0
+     * @return flag indicating whether or not the setup was
+     * successful.
+     * 
+     */
+    public boolean setupGame() {
+        try {
+            dealHands();
+            populateDecks();
+            setupComplete = true;
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
     }
 
 
@@ -77,7 +149,7 @@ public class CardGame {
      * @version 1.0
      * 
      */
-    public void dealHands() {
+    private void dealHands() {
         for (int i = 0; i < 4; i++) {  
             for (Player player : playerList) {
                 Card card = pack.get(pack.size()-1);
@@ -86,6 +158,7 @@ public class CardGame {
             }
         }
     }
+
 
     /**
      * populateDecks method. Iterates 4 times representing the size
@@ -96,7 +169,7 @@ public class CardGame {
      * @version 1.0
      * 
      */
-    public void populateDecks() {
+    private void populateDecks() {
         for (int i = 0; i < 4; i++) {  
             for (CardDeck deck : deckList) {
                 Card card = pack.get(pack.size() - 1);
@@ -104,46 +177,6 @@ public class CardGame {
                 deck.addCard(card);
             }
         }
-    }
-
-
-    /**
-     * nextTurn method. Determines which player's turn it is.
-     * Finds the current player object and the CardDeck objects
-     * either side of the current player. Proceeds to play a
-     * turn according to the game rules.
-     * 
-     * @author Miles Edwards
-     * @version 1.0
-     * @return flag indicating if current player has winning hand
-     * 
-     */
-    public boolean nextTurn() {
-        if (playerTurn == numPlayers - 1) {
-            playerTurn = 0;
-        } else {
-            playerTurn++;
-        }
-
-        CardDeck rightDeck;
-        CardDeck leftDeck = deckList.get(playerTurn);
-        Player player = playerList.get(playerTurn);
-
-        if (playerTurn + 1 == numPlayers) {
-            rightDeck = deckList.get(0);
-        } else {
-            rightDeck = deckList.get(playerTurn + 1);
-        }
-
-        player.pickCardFrom(leftDeck);
-        player.discardCardTo(rightDeck);
-        player.updateHandVolatility();
-
-        if (player.checkHand()) {
-            winner = player;
-            return true;
-        }
-        return false;
     }
 
 
