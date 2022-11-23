@@ -36,7 +36,7 @@ public class CardDeck {
     /**
      * addCard method. Adds a card to the top of the deck.
      * 
-     * @author Miles Edwards
+     * @author Miles Edwards, Shuhui Chen
      * @version 1.0
      * @param c card to be added to the deck.
      * 
