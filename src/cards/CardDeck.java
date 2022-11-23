@@ -5,8 +5,8 @@ import java.util.ArrayList;
 /**
  * CardDeck class. Each CardDeck has an array of cards.
  * 
- * @author Miles Edwards
- * @version 1.0
+ * @author Miles Edwards, Shuhui Chen
+ * @version 1.1
  * 
  */
 public class CardDeck {
@@ -36,8 +36,8 @@ public class CardDeck {
     /**
      * addCard method. Adds a card to the top of the deck.
      * 
-     * @author Miles Edwards
-     * @version 1.0
+     * @author Miles Edwards, Shuhui Chen
+     * @version 1.1
      * @param c card to be added to the deck.
      * 
      */
@@ -54,7 +54,9 @@ public class CardDeck {
          * cards.get(cards.size()-1) will return the card
          * at the top of deck.
          */
-        return new Card();
+        Card poppedCard = cards.get(cards.size() - 1);
+        cards.remove(cards.size() - 1);
+        return poppedCard;
     }
     
 
@@ -63,5 +65,6 @@ public class CardDeck {
          * Appends "card" to the bottom (i=0) of "card"
          * 
          */
+        cards.add(0, card);
     }
 }
