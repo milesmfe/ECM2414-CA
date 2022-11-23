@@ -6,10 +6,10 @@ package cards;
  * denomination and a hand of 4 cards.
  * 
  * @author Miles Edwards
- * @version 1.0
+ * @version 1.1
  * 
  */
-public class Player {
+public class Player extends Thread {
     private static int playerCount = 0;
     private int playerNumber;
     private CardDenomination preferredDenomination;
@@ -194,5 +194,24 @@ public class Player {
                 hand[i].incrementVolatility();
             }
         }
+    }
+
+
+    /**
+     * run method. This method is called when this player's thread
+     * begins. Plays the game continuously until this player wins.
+     * Could be interrupted by other player threads before winning.
+     * 
+     * @author Miles Edwards
+     * @version 1.0 
+     * 
+     */
+    @Override
+    public void run() {
+        /**
+         * Play the game according to spec.
+         * Should output moves, etc.
+         * Notify main thread when game is won.
+         */
     }
 }

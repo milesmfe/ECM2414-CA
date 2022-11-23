@@ -6,7 +6,7 @@ import java.util.ArrayList;
  * CardGame class.
  * 
  * @author Miles Edwards
- * @version 1.0
+ * @version 1.1
  * 
  */
 public class CardGame {
