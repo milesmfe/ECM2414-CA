@@ -272,6 +272,11 @@ public class CardGame {
     }
 
 
+    public void quickStart() {
+        if (setupGame()) { startGame(); }
+    }
+
+
     public static void main(String[] args) throws Exception {
          /**
          * This is the executable method.
