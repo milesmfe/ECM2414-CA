@@ -47,5 +47,4 @@ public class CardDenominationTest {
         assertEquals(CardDenomination.QUEEN, CardDenomination.valueOf(12));
         assertEquals(CardDenomination.KING, CardDenomination.valueOf(13));
     }
-    
 }
