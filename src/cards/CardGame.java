@@ -85,7 +85,7 @@ public class CardGame {
 
     public void generatePackFile(String n) {
         try {
-            FileWriter fw = new FileWriter(n);
+            FileWriter fw = new FileWriter("packs/" + n);
             for (Card card : pack) {
                 System.out.println(card.getDenomination().getValue());
                 fw.write(String.format("%d\n", card.getDenomination().getValue()));
