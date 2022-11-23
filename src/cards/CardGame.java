@@ -131,7 +131,8 @@ public class CardGame {
      * pack file.
      * 
      * @author Miles Edwards
-     * @version 1.0
+     * @author Shuhui Chen
+     * @version 1.1
      * 
      * @param n file name.
      * 
@@ -149,6 +150,14 @@ public class CardGame {
          * Ensure each line only contains an integer between 1 and 13 (inclusive)
          * Check that there are 8n lines.
          */
+        File packFile = new File("test-pack-1");
+        Scanner fileScanner = new Scanner (packFile);
+        while (fileScanner.hasNextLine()) {
+            String nextLine = fileScanner.nextLine();
+            if (nextLine == (int)nextLine && (int)nextLine <= 13 ) {}
+            else {System.out.println("Please use an valid pack file");}
+        }
+
         return true;
     }
 
