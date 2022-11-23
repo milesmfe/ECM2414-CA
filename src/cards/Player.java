@@ -164,7 +164,7 @@ public class Player extends Thread {
      * @throws Exception
      * 
      */
-    public synchronized void pickCardFrom(CardDeck deck) {
+    public void pickCardFrom(CardDeck deck) {
         findMostVolatileCard();
         int index = 0;
         for (int i = 0; i < 4; i++) { if (hand[i] == discard) { index = i; } }
@@ -183,9 +183,16 @@ public class Player extends Thread {
      * @param deck specify the deck to discard a card to.
      * 
      */
-    public synchronized void discardCardTo(CardDeck deck) {
+    public void discardCardTo(CardDeck deck) {
         deck.appendToBottom(discard);
         discard = null;
+        updateHandVolatility();
+    }
+
+
+    private void atomicPlayAction(CardDeck left, CardDeck right) {
+        pickCardFrom(left);
+        discardCardTo(right);
     }
 
 
@@ -236,24 +243,44 @@ public class Player extends Thread {
      * 
      */
     @Override
-    public void run() {
+    public synchronized void run() {
+        // -- Print hand dealt -- //
+        System.out.println(String.format("player %o initial hand %s %s %s %s",
+        playerNumber,
+        hand[0].getDenomination().name(), hand[1].getDenomination().name(),
+        hand[2].getDenomination().name(), hand[3].getDenomination().name()));
+        // -- Immediately check whether player has won, if so declare this -- //
+        if (checkHand()) { System.out.println(String.format("Player %o wins", playerNumber)); }
+        // -- Loop game logic until game status changes -- //
         while (game.getStatus() == 1) {
+            // -- Check that both decks either side of player are not empty -- //
             if (leftDeck.getDeckSize() > 0 && rightDeck.getDeckSize() > 0) {
-                pickCardFrom(leftDeck);
-                discardCardTo(rightDeck);
-                updateHandVolatility();
-                if (checkHand()) { game.declareWinnerAs(playerNumber); }
-
-                // Print to console stuff
-                System.out.println(String.format("Player %o says: This is my hand:", playerNumber));
-                for (int i = 0; i < 4; i++) {
-                    System.out.println(hand[i].getDenomination().name());
+                // -- Game logic -- //
+                atomicPlayAction(leftDeck, rightDeck);
+                // -- If player wins -- //
+                if (checkHand()) {
+                    game.declareWinnerAs(playerNumber);
+                    System.out.println(String.format("player %o wins", playerNumber));
+                    System.out.println(String.format("player %o final hand %s %s %s %s",
+                    playerNumber,
+                    hand[0].getDenomination().name(), hand[1].getDenomination().name(),
+                    hand[2].getDenomination().name(),hand[3].getDenomination().name()));
                 }
-                // ---------------------------------------------------------------------------------------- //
-                
-            } else {
-                System.out.println(String.format("Player %o says: I can't play!", playerNumber));
-            }
+                // -- Print current hand -- //
+                System.out.println(String.format("player %o current hand is %s %s %s %s",
+                playerNumber,
+                hand[0].getDenomination().name(), hand[1].getDenomination().name(),
+                hand[2].getDenomination().name(), hand[3].getDenomination().name()));
+            } 
+        }
+        if (game.getWinningPlayer() != this) {
+            // -- If player didn't win -- //
+            Player winningPlayer = game.getWinningPlayer();
+            System.out.println(String.format("player %o wins", winningPlayer.getPlayerNumber()));
+                    System.out.println(String.format("player %o final hand %s %s %s %s",
+                    winningPlayer.getPlayerNumber(),
+                    winningPlayer.getCardAt(0).getDenomination().name(), winningPlayer.getCardAt(1).getDenomination().name(),
+                    winningPlayer.getCardAt(2).getDenomination().name(), winningPlayer.getCardAt(3).getDenomination().name()));
         }
     }
 }
