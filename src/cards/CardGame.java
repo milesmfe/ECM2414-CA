@@ -101,7 +101,8 @@ public class CardGame {
      * getPackFrom generates a pack of cards from a given file.
      * 
      * @author Miles Edwards
-     * @version 1.0
+     * @author Shuhui Chen
+     * @version 1.1
      * 
      * @param n file name.
      * 
@@ -117,6 +118,10 @@ public class CardGame {
          * while (fileScanner.hasNextLine()) { anArray.add(new Card(fileScanner.nextLine())) }
          * Return a generated ArrayList of these card objects.
          */
+        File packFile = new File("test-pack-1");
+        Scanner fileScanner = new Scanner (packFile);
+        while (fileScanner.hasNextLine()) { pack.add(new Card(fileScanner.nextLine())) }
+        fileScanner.close();
         return new ArrayList<Card>();
     }
 
