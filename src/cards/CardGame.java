@@ -92,6 +92,20 @@ public class CardGame {
 
 
     /**
+     * getPlayerNumberOf method.
+     * 
+     * @author Miles Edwards
+     * @version 1.0
+     * @return the player number of a specified player in the game.
+     * @param p a specific player in the game.
+     * 
+     */
+    public int getPlayerNumberOf(Player p) {
+        return playerList.indexOf(p);
+    }
+
+
+    /**
      * getDecks method.
      * 
      * @author Miles Edwards
@@ -177,6 +191,56 @@ public class CardGame {
                 deck.addCard(card);
             }
         }
+    }
+
+
+    /**
+     * deckLeftOf method
+     * 
+     * @author Miles Edwards
+     * @version 1.0
+     * @param p a specific player in the game.
+     * @return the deck to the left of player p
+
+     * 
+     */
+    public CardDeck deckLeftOf(int p) {
+        return deckList.get(--p);
+    }
+
+
+    /**
+     * deckRightOf method
+     * 
+     * @author Miles Edwards
+     * @version 1.0
+     * @param p a specific player in the game.
+     * @return the deck to the right of player p
+     * 
+     */
+    public CardDeck deckRightOf(int p) {
+        if (p == numPlayers) {
+            return deckList.get(0);
+        } else {
+            return deckList.get(p);
+        }
+    }
+
+
+    /**
+     * declareWinnerAs method. Player threads should use this to declare
+     * that they have a winning hand.
+     * 
+     * @param p a specific player in the game.
+     * @return true if player p wins, otherwise false.
+     * 
+     */
+    public boolean declareWinnerAs(int p) {
+        /**
+         * Determine whether player p has won.
+         * Return true if they have, flase otherwise.
+         */
+        return false;
     }
 
 
