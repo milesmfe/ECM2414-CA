@@ -67,6 +67,5 @@ public class CardDeck {
          * 
          */
         cards.add(0, card);
-        
     }
 }
