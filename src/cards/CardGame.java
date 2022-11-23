@@ -1,9 +1,11 @@
 package cards;
 
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Scanner;
 
 /**
  * CardGame class.
@@ -120,7 +122,7 @@ public class CardGame {
          */
         File packFile = new File("test-pack-1");
         Scanner fileScanner = new Scanner (packFile);
-        while (fileScanner.hasNextLine()) { pack.add(new Card(fileScanner.nextLine())) }
+        while (fileScanner.hasNextLine()) { pack.add(new Card(fileScanner.nextLine())); }
         fileScanner.close();
         return new ArrayList<Card>();
     }
