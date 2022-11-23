@@ -283,8 +283,7 @@ public class CardGame {
     }
 
     public void startGame() {
-        if (setupGame()) {
-
+        if (getStatus() == 1) {
             for (Player player : playerList) {
                 player.start();
             }
