@@ -59,6 +59,19 @@ public class CardDeck {
     }
 
 
+     /**
+     * getDeckSize method.
+     * 
+     * @author Miles Edwards
+     * @version 1.0
+     * @return the number of cards in this deck.
+     * 
+     */
+    public int getDeckSize() {
+        return cards.size();
+    }
+
+
     /**
      * addCard method. Adds a card to the top of the deck.
      * 
