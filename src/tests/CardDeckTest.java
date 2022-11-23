@@ -1,6 +1,10 @@
 package tests;
 
 import org.junit.Test;
+
+import cards.Card;
+import cards.CardDeck;
+
 import static org.junit.Assert.*;
 
 /**
@@ -14,7 +18,13 @@ public class CardDeckTest {
 
     @Test
     public void testSomething() {
-        assertEquals(getClass(), getClass());
+        CardDeck testDeck = new CardDeck();
+        testDeck.addCard(new Card(1));
+        testDeck.addCard(new Card(2));
+        testDeck.addCard(new Card(3));
+        testDeck.addCard(new Card(4));
+
+        assertEquals(4, testDeck.getDeckSize());
     }
     
 }
