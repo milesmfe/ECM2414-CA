@@ -25,6 +25,9 @@ public class Card {
          * is implemented. Replaced by public Card(CardDenomination d) {}
          * 
          */
+        Random rand = new Random();
+        int randomNum = rand.nextInt((13 - 1) + 1) + 1;
+        denomination = CardDenomination.valueOf(randomNum);
     }
 
 
