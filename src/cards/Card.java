@@ -19,12 +19,10 @@ public class Card {
     /**
      * Card constructor. Assigns instance with random denomination.
      * 
-     * @deprecated
      * @author Shuhui Chen
      * @version 1.0
      * 
      */
-    @Deprecated
     public Card() {
         Random rand = new Random();
         int randomNum = rand.nextInt(13) + 1;
