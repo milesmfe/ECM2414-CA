@@ -15,6 +15,7 @@ public class CardGame {
     private ArrayList<Card> pack;
     private int numPlayers = 0;
     private boolean setupComplete = false;
+    private boolean gameStarted = false;
     private Player winningPlayer = null;
 
     
@@ -67,17 +68,29 @@ public class CardGame {
      * 
      * @author Miles Edwards
      * @version 1.0
-     * @return 0 if setup is not complete, 1 if setup is complete, 2 if game has a winner.
+     * @return 0 if setup is not complete, 1 if setup is complete, 
+     * 2 if game has started, 3 if game has a winner.
      * 
      */
     public int getStatus() {
-        if (setupComplete) {
-            if (winningPlayer == null) {
+        if (setupComplete) { 
+            if (gameStarted) { 
+                if (winningPlayer != null) { 
+                    // -- Setup is complete, game has started, and the game has a winning player -- //
+                    return 3; 
+                } 
+                else {
+                    // -- Setup is complete, game has started, but no winning player -- //
+                    return 2; 
+                }
+            } 
+            else {
+                // -- Setup is complete, but game has not started -- //
                 return 1;
-            } else {
-                return 2;
             }
-        } else {
+        } 
+        else {
+            // -- Setup is not complete -- //
             return 0;
         }
     }
@@ -169,12 +182,13 @@ public class CardGame {
         try {
             dealHands();
             populateDecks();
-            for (int i = 0; i < 4; i++) {
+            for (int i = 0; i < numPlayers; i++) {
                 playerList.get(i).locateDecks();
             }
             setupComplete = true;
             return true;
         } catch (Exception e) {
+            // -- Log exception here -- //
             return false;
         }
     }
@@ -266,6 +280,15 @@ public class CardGame {
     public boolean declareWinnerAs(int p) {
         winningPlayer = playerList.get(--p);
         return true;
+    }
+
+    public void startGame() {
+        if (setupGame()) {
+
+            for (Player player : playerList) {
+                player.start();
+            }
+        }
     }
 
 
