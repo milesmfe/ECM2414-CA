@@ -16,6 +16,8 @@ public class Player extends Thread {
     private CardDenomination preferredDenomination;
     private Card[] hand = new Card[4];
     private Card discard;
+    private CardDeck leftDeck;
+    private CardDeck rightDeck;
 
 
     /**
@@ -90,6 +92,16 @@ public class Player extends Thread {
     }
 
 
+    public CardDeck getLeftDeck() {
+        return leftDeck;
+    }
+
+
+    public CardDeck getRightDeck() {
+        return rightDeck;
+    }
+
+
     /**
      * setCardAt method. Use this method to modify the player's
      * hand.
@@ -103,6 +115,20 @@ public class Player extends Thread {
      */
     public void setCardAt(int index, Card card) {
         hand[index] = card;
+    }
+
+
+    /**
+     * locateDecks method. Finds the positions of decks either side of 
+     * this player.
+     * 
+     * @author Miles Edwards
+     * @version 1.0
+     * 
+     */
+    public void locateDecks() {
+        rightDeck = game.deckRightOf(playerNumber);
+        leftDeck = game.deckLeftOf(playerNumber);
     }
 
 
@@ -212,17 +238,19 @@ public class Player extends Thread {
     @Override
     public void run() {
         while (game.getStatus() == 1) {
-            CardDeck left = game.deckLeftOf(playerNumber);
-            CardDeck right = game.deckRightOf(playerNumber);
-            if (left.getDeckSize() > 0 && right.getDeckSize() > 0) {
-                pickCardFrom(game.deckLeftOf(playerNumber));
-                discardCardTo(game.deckRightOf(playerNumber));
+            if (leftDeck.getDeckSize() > 0 && rightDeck.getDeckSize() > 0) {
+                pickCardFrom(leftDeck);
+                discardCardTo(rightDeck);
                 updateHandVolatility();
                 if (checkHand()) { game.declareWinnerAs(playerNumber); }
+
+                // Print to console stuff
                 System.out.println(String.format("Player %o says: This is my hand:", playerNumber));
                 for (int i = 0; i < 4; i++) {
                     System.out.println(hand[i].getDenomination().name());
                 }
+                // ---------------------------------------------------------------------------------------- //
+                
             } else {
                 System.out.println(String.format("Player %o says: I can't play!", playerNumber));
             }
