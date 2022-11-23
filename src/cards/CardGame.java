@@ -14,9 +14,8 @@ public class CardGame {
     private ArrayList<CardDeck> deckList;
     private ArrayList<Card> pack;
     private int numPlayers = 0;
-    private boolean setupComplete = false;
-    private boolean gameStarted = false;
-    private Player winningPlayer = null;
+    private Player winningPlayer;
+    private GameStatus status;
 
     
     /**
@@ -68,31 +67,11 @@ public class CardGame {
      * 
      * @author Miles Edwards
      * @version 1.0
-     * @return 0 if setup is not complete, 1 if setup is complete, 
-     * 2 if game has started, 3 if game has a winner.
+     * @return the current status of this game.
      * 
      */
-    public int getStatus() {
-        if (setupComplete) { 
-            if (gameStarted) { 
-                if (winningPlayer != null) { 
-                    // -- Setup is complete, game has started, and the game has a winning player -- //
-                    return 3; 
-                } 
-                else {
-                    // -- Setup is complete, game has started, but no winning player -- //
-                    return 2; 
-                }
-            } 
-            else {
-                // -- Setup is complete, but game has not started -- //
-                return 1;
-            }
-        } 
-        else {
-            // -- Setup is not complete -- //
-            return 0;
-        }
+    public GameStatus getStatus() {
+        return status;
     }
 
 
@@ -185,7 +164,7 @@ public class CardGame {
             for (int i = 0; i < numPlayers; i++) {
                 playerList.get(i).locateDecks();
             }
-            setupComplete = true;
+            status = GameStatus.SETUP_IDLE;
             return true;
         } catch (Exception e) {
             // -- Log exception here -- //
@@ -279,11 +258,13 @@ public class CardGame {
      */
     public boolean declareWinnerAs(int p) {
         winningPlayer = playerList.get(--p);
+        status = GameStatus.GAME_WON;
         return true;
     }
 
     public void startGame() {
-        if (getStatus() == 1) {
+        if (getStatus() == GameStatus.SETUP_IDLE) {
+            status = GameStatus.SETUP_ACTIVE;
             for (Player player : playerList) {
                 player.start();
             }

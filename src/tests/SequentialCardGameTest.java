@@ -9,7 +9,7 @@ public class SequentialCardGameTest {
         sequentialTestGame.setupGame();
 
         int currentPlayer = 1;
-        while (sequentialTestGame.getStatus() == 1) {
+        while (sequentialTestGame.getStatus() == GameStatus.SETUP_ACTIVE) {
             for (int i = 0; i < sequentialTestGame.getNumPlayers(); i++) {
                 Player player = sequentialTestGame.getPlayer(currentPlayer);
                 player.pickCardFrom(player.getLeftDeck());

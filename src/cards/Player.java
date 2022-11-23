@@ -252,7 +252,7 @@ public class Player extends Thread {
         // -- Immediately check whether player has won, if so declare this -- //
         if (checkHand()) { System.out.println(String.format("Player %o wins", playerNumber)); }
         // -- Loop game logic until game status changes -- //
-        while (game.getStatus() == 1) {
+        while (game.getStatus() == GameStatus.SETUP_ACTIVE) {
             // -- Check that both decks either side of player are not empty -- //
             if (leftDeck.getDeckSize() > 0 && rightDeck.getDeckSize() > 0) {
                 // -- Game logic -- //
