@@ -59,8 +59,8 @@ public enum CardDenomination {
 
 
     /**
-     * valueOf method. Returns the correponding value of a specified
-     * card denomination name.
+     * valueOf method. Returns the correponding name of a specified
+     * card denomination value.
      * 
      * @author Miles Edwards
      * @version 1.0
