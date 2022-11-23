@@ -15,6 +15,7 @@ public class CardGame {
     private ArrayList<Card> pack;
     private int numPlayers = 0;
     private boolean setupComplete = false;
+    private Player winningPlayer = null;
 
     
     /**
@@ -66,12 +67,16 @@ public class CardGame {
      * 
      * @author Miles Edwards
      * @version 1.0
-     * @return 1 if setup is complete, 0 if setup is not complete.
+     * @return 0 if setup is not complete, 1 if setup is complete, 2 if game has a winner.
      * 
      */
     public int getStatus() {
         if (setupComplete) {
-            return 1;
+            if (winningPlayer == null) {
+                return 1;
+            } else {
+                return 2;
+            }
         } else {
             return 0;
         }
@@ -102,6 +107,20 @@ public class CardGame {
      */
     public int getPlayerNumberOf(Player p) {
         return playerList.indexOf(p);
+    }
+
+
+     /**
+     * getPlayer method.
+     * 
+     * @author Miles Edwards
+     * @version 1.0
+     * @return the player object of a specified player in the game.
+     * @param n a specific player's number
+     * 
+     */
+    public Player getPlayer(int n) {
+        return playerList.get(--n);
     }
 
 
@@ -201,7 +220,6 @@ public class CardGame {
      * @version 1.0
      * @param p a specific player in the game.
      * @return the deck to the left of player p
-
      * 
      */
     public CardDeck deckLeftOf(int p) {
@@ -238,16 +256,14 @@ public class CardGame {
      * 
      */
     public boolean declareWinnerAs(int p) {
-        /**
-         * Determine whether player p has won.
-         * Return true if they have, flase otherwise.
-         */
-        return false;
+        winningPlayer = playerList.get(--p);
+        System.out.println(String.format("Player %o wins!", p));
+        return true;
     }
 
 
     public static void main(String[] args) throws Exception {
-          /**
+         /**
          * This is the executable method.
          * 
          */

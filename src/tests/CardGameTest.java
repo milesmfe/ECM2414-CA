@@ -2,9 +2,12 @@ package tests;
 
 import org.junit.Test;
 
+import cards.Card;
 import cards.CardDeck;
 import cards.CardGame;
 import static org.junit.Assert.*;
+
+import java.util.ArrayList;
 
 /**
  * CardGameTest class.
@@ -14,6 +17,19 @@ import static org.junit.Assert.*;
  * 
  */
 public class CardGameTest {
+
+
+    @Test
+    public void testSetupGame() {
+        CardGame testGame = new CardGame(4);
+        testGame.setupGame();
+
+        assertEquals(new ArrayList<Card>(), testGame.getPack());
+        assertNotEquals(0, testGame.getPlayer(1).getCardAt(0));
+        assertNotEquals(0, testGame.getPlayer(1).getCardAt(1));
+        assertNotEquals(0, testGame.getPlayer(1).getCardAt(2));
+        assertNotEquals(0, testGame.getPlayer(1).getCardAt(3));
+    }
 
 
     @Test

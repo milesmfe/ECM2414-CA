@@ -138,7 +138,7 @@ public class Player extends Thread {
      * @throws Exception
      * 
      */
-    public void pickCardFrom(CardDeck deck) {
+    public synchronized void pickCardFrom(CardDeck deck) {
         findMostVolatileCard();
         int index = 0;
         for (int i = 0; i < 4; i++) { if (hand[i] == discard) { index = i; } }
@@ -157,7 +157,7 @@ public class Player extends Thread {
      * @param deck specify the deck to discard a card to.
      * 
      */
-    public void discardCardTo(CardDeck deck) {
+    public synchronized void discardCardTo(CardDeck deck) {
         deck.appendToBottom(discard);
         discard = null;
     }
@@ -211,9 +211,21 @@ public class Player extends Thread {
      */
     @Override
     public void run() {
-        pickCardFrom(game.deckLeftOf(playerNumber));
-        discardCardTo(game.deckRightOf(playerNumber));
-        updateHandVolatility();
-        if (checkHand()) { game.declareWinnerAs(playerNumber); }
+        while (game.getStatus() == 1) {
+            CardDeck left = game.deckLeftOf(playerNumber);
+            CardDeck right = game.deckRightOf(playerNumber);
+            if (left.getDeckSize() > 0 && right.getDeckSize() > 0) {
+                pickCardFrom(game.deckLeftOf(playerNumber));
+                discardCardTo(game.deckRightOf(playerNumber));
+                updateHandVolatility();
+                if (checkHand()) { game.declareWinnerAs(playerNumber); }
+                System.out.println(String.format("Player %o says: This is my hand:", playerNumber));
+                for (int i = 0; i < 4; i++) {
+                    System.out.println(hand[i].getDenomination().name());
+                }
+            } else {
+                System.out.println(String.format("Player %o says: I can't play!", playerNumber));
+            }
+        }
     }
 }
