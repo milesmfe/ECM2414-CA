@@ -94,8 +94,11 @@ public class CardGame {
         /**
          * Call validate pack.
          * Read from file named "n"
+         * File packFile = new File(n);
          * Read one line at a time.
+         * Scanner fileScanner = new Scanner(packFile);
          * Create a Card object with the integer per line.
+         * while (fileScanner.hasNextLine()) { anArray.add(new Card(fileScanner.nextLine())) }
          * Return a generated ArrayList of these card objects.
          */
         return new ArrayList<Card>();
@@ -112,12 +115,20 @@ public class CardGame {
      * @param n file name.
      * 
      */
-    private void validatePack(String n) {    
+    private boolean validatePack(String n) {    
         /**
+         * File packFile = new File(n);
+         * Scanner fileScanner = new Scanner(packFile);
          * Iterate through each line
+         * while (fileScanner.hasNextLine()) {
+         *          String nextLine = fileScanner.nextLine()
+         *      if (check nextLine is an integer and is in range)
+         *      else { return false }
+         * }
          * Ensure each line only contains an integer between 1 and 13 (inclusive)
          * Check that there are 8n lines.
          */
+        return true;
     }
 
 
