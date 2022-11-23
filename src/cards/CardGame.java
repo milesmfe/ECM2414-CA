@@ -15,6 +15,7 @@ public class CardGame {
     private static ArrayList<CardDeck> deckList;
     private static ArrayList<Card> pack;
     private static int playerTurn = 0;
+    private static Player winner;
 
     
     /**
@@ -139,6 +140,7 @@ public class CardGame {
         player.updateHandVolatility();
 
         if (player.checkHand()) {
+            winner = player;
             return true;
         }
         return false;
@@ -146,7 +148,7 @@ public class CardGame {
 
 
     public static void main(String[] args) throws Exception {
-        /**
+          /**
          * This is the executable method.
          * 
          */
