@@ -3,9 +3,11 @@ package cards;
 import java.util.ArrayList;
 
 /**
- * CardDeck class. Each CardDeck has an array of cards.
+ * CardDeck class. Each CardDeck has an array of cards and
+ * a deck number determined by a static counter.
  * 
- * @author Miles Edwards, Shuhui Chen
+ * @author Miles Edwards
+ * @author Shuhui Chen
  * @version 1.0
  * 
  */
@@ -15,7 +17,15 @@ public class CardDeck {
     private ArrayList<Card> cards;
     
 
-    //Constructor
+    /**
+     * CardDeck constructor. Increments static deck count.
+     * Assignes instance with a unique number.
+     * Initiates cards list.
+     * 
+     * @author Miles Edwards
+     * @version 1.0
+     * 
+     */
     public CardDeck() {
         deckCount++;
         deckNumber = deckCount;
@@ -23,11 +33,27 @@ public class CardDeck {
     }
 
 
-    //Get methods
+    /**
+     * getDeckCount method.
+     * 
+     * @author Miles Edwards
+     * @version 1.0
+     * @return the global number of decks.
+     * 
+     */
     public static int getDeckCount() {
         return deckCount;
     }
 
+
+    /**
+     * getDeckNumber method.
+     * 
+     * @author Miles Edwards
+     * @version 1.0
+     * @return this instance's unique deck number.
+     * 
+     */
     public int getDeckNumber() {
         return deckNumber;
     }
@@ -36,7 +62,7 @@ public class CardDeck {
     /**
      * addCard method. Adds a card to the top of the deck.
      * 
-     * @author Miles Edwards, Shuhui Chen
+     * @author Shuhui Chen
      * @version 1.0
      * @param c card to be added to the deck.
      * 
@@ -45,27 +71,34 @@ public class CardDeck {
         cards.add(c);
     }
 
-    
+
+    /**
+     * popFromTop method. Popps the top card from the deck.
+     * Also sets the popped card's volatility to 0.
+     * 
+     * @author Shuhui Chen
+     * @author Miles Edwards
+     * @version 1.0
+     * @return a card popped from the top of the deck.
+     * 
+     */
     public Card popFromTop() {
-        /**
-         * Pops a card from the top of "cards"
-         * Thus removing the top (i=n-1) card from "cards"
-         * Returns said popped card.
-         * cards.get(cards.size()-1) will return the card
-         * at the top of deck.
-         */
         Card poppedCard = cards.get(cards.size() - 1);
         cards.remove(cards.size() - 1);
+        poppedCard.setVolatility(0);
         return poppedCard;
-        //return new Card();
     }
     
 
+     /**
+     * appendToBottom method. Appends a card to the bottom of the deck.
+     * 
+     * @author Shuhui Chen
+     * @version 1.0
+     * @param card the card to append to the bottom of the deck.
+     * 
+     */
     public void appendToBottom(Card card) {
-        /**
-         * Appends "card" to the bottom (i=0) of "card"
-         * 
-         */
         cards.add(0, card);
     }
 }
