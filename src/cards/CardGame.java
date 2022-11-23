@@ -150,6 +150,11 @@ public class CardGame {
     }
 
 
+    public Player getWinningPlayer() {
+        return winningPlayer;
+    }
+
+
     /**
      * setupGame method. Calls dealHands and populateDecks.
      * Any issue is caught as a generic Exception.
@@ -164,6 +169,9 @@ public class CardGame {
         try {
             dealHands();
             populateDecks();
+            for (int i = 0; i < 4; i++) {
+                playerList.get(i).locateDecks();
+            }
             setupComplete = true;
             return true;
         } catch (Exception e) {
@@ -257,7 +265,6 @@ public class CardGame {
      */
     public boolean declareWinnerAs(int p) {
         winningPlayer = playerList.get(--p);
-        System.out.println(String.format("Player %o wins!", p));
         return true;
     }
 
