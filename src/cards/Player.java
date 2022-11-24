@@ -190,7 +190,7 @@ public class Player extends Thread {
     }
 
 
-    private void atomicPlayAction(CardDeck left, CardDeck right) {
+    private synchronized void atomicPlayAction(CardDeck left, CardDeck right) {
         pickCardFrom(left);
         discardCardTo(right);
     }

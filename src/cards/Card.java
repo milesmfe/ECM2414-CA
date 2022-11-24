@@ -63,7 +63,7 @@ public class Card {
      * @return this card's volatility.
      * 
      */
-    public int getVolatility() {
+    public synchronized int getVolatility() {
         return volatility;
     }
 
@@ -76,7 +76,7 @@ public class Card {
      * @param v specify an integer volatility value.
      * 
      */
-    public void setVolatility(int v) {
+    public synchronized void setVolatility(int v) {
         volatility = v;
     }
 
@@ -87,7 +87,7 @@ public class Card {
      * @version 1.0
      * 
      */
-    public void incrementVolatility() {
+    public synchronized void incrementVolatility() {
         volatility++;
     }
 }

@@ -378,10 +378,13 @@ public class CardGame {
      * @return true if player p wins, otherwise false.
      * 
      */
-    public boolean declareWinnerAs(Player p) {
-        winningPlayer = p;
-        status = GameStatus.GAME_WON;
-        return true;
+    public synchronized boolean declareWinnerAs(Player p) {
+        if (status != GameStatus.GAME_WON) {
+            winningPlayer = p;
+            status = GameStatus.GAME_WON;
+            return true;
+        }
+        return false;
     }
 
 
@@ -423,6 +426,7 @@ public class CardGame {
          * This is the executable method.
          * 
          */
+        new CardGame(4, "test-pack-1.txt").quickStart();
     }
 
 
