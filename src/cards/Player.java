@@ -1,5 +1,8 @@
 package cards;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 
 /**
  * Player class. Each player instance has a prefferred
@@ -18,6 +21,8 @@ public class Player extends Thread {
     private CardDeck leftDeck;
     private CardDeck rightDeck;
     private int turns = 0;
+    private File outputFile;
+    FileWriter fw = null;
 
 
     /**
@@ -159,7 +164,7 @@ public class Player extends Thread {
         if (card.getDenomination() == preferredDenomination) { card.setVolatility(-1); }
         hand[index] = card;
         // -- Print card draw action -- //
-        System.out.println(String.format("player %d draws a %d from deck %d",
+        logMessage(String.format("player %d draws a %d from deck %d",
             getPlayerNumber(), card.getDenomination().getValue(), deck.getDeckNumber()));
     }
 
@@ -176,7 +181,7 @@ public class Player extends Thread {
     private void discardCardTo(CardDeck deck) {
         deck.appendToBottom(discard);
         // -- Print card discard action -- //
-        System.out.println(String.format("player %d discards a %d to deck %d",
+        logMessage(String.format("player %d discards a %d to deck %d",
             getPlayerNumber(), discard.getDenomination().getValue(), deck.getDeckNumber()));
         discard = null;
         updateHandVolatility();
@@ -238,6 +243,25 @@ public class Player extends Thread {
 
 
     /**
+     * logMessage method. Prints msg to player thread and writes
+     * msg as new line in player output file.
+     * 
+     * @author Miles Edwards
+     * @version 1.0 
+     * @param msg the message to log
+     * 
+     */
+    private void logMessage(String msg) {
+        try {
+            fw.write(System.lineSeparator() + msg);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        System.out.println(msg);
+    }
+
+
+    /**
      * run method. This method is called when this player's thread
      * begins. Plays the game continuously until this player wins.
      * Could be interrupted by other player threads before winning.
@@ -248,8 +272,22 @@ public class Player extends Thread {
      */
     @Override
     public void run() {
+        outputFile = new File(String.format("results/player_%d.txt", getPlayerNumber()));
+        String modifier = "_copy";
+        while (outputFile.exists()) {
+            final String modDir = outputFile.getPath().replaceFirst("results", "results" + modifier);
+            outputFile = new File(String.format("%s/player_%d.txt", 
+            modDir, getPlayerNumber()));
+        }
+        outputFile.getParentFile().mkdirs();
+        System.out.println(outputFile.getPath());
+        try {
+            fw = new FileWriter(outputFile, true);
+        } catch (IOException e1) {
+            e1.printStackTrace();
+        }
         // -- Print hand dealt -- //
-        System.out.println(String.format("player %d initial hand %s %s %s %s",
+        logMessage(String.format("player %d initial hand %s %s %s %s",
         playerNumber,
         hand[0].getDenomination().name(), hand[1].getDenomination().name(),
         hand[2].getDenomination().name(), hand[3].getDenomination().name()));
@@ -257,8 +295,8 @@ public class Player extends Thread {
         if (checkHand()) { 
             if (game.declareWinnerAs(this)) {
                 // -- If player excusively wins -- //
-                System.out.println(String.format("player %d wins", playerNumber));
-                System.out.println(String.format("player %d final hand %s %s %s %s",
+                logMessage(String.format("player %d wins", playerNumber));
+                logMessage(String.format("player %d final hand %s %s %s %s",
                 playerNumber,
                 hand[0].getDenomination().name(), hand[1].getDenomination().name(),
                 hand[2].getDenomination().name(),hand[3].getDenomination().name()));
@@ -272,7 +310,7 @@ public class Player extends Thread {
             if (leftDeck.getDeckSize() > 0) {
                 // -- Game logic -- //
                 atomicPlayAction(leftDeck, rightDeck);
-                System.out.println(String.format("player %d current hand is %s %s %s %s",
+                logMessage(String.format("player %d current hand is %s %s %s %s",
                         playerNumber,
                         hand[0].getDenomination().name(), hand[1].getDenomination().name(),
                         hand[2].getDenomination().name(),hand[3].getDenomination().name()));
@@ -280,10 +318,10 @@ public class Player extends Thread {
                 if (checkHand()) {
                     if (game.declareWinnerAs(this)) {
                         // -- If player excusively wins -- //
-                        System.out.println(String.format("player %d wins", playerNumber));
-                        System.out.println(String.format("player %d exits after %d turns",
+                        logMessage(String.format("player %d wins", playerNumber));
+                        logMessage(String.format("player %d exits after %d turns",
                         playerNumber, turns));
-                        System.out.println(String.format("player %d final hand %s %s %s %s",
+                        logMessage(String.format("player %d final hand %s %s %s %s",
                         playerNumber,
                         hand[0].getDenomination().name(), hand[1].getDenomination().name(),
                         hand[2].getDenomination().name(),hand[3].getDenomination().name()));
@@ -296,14 +334,21 @@ public class Player extends Thread {
         int winningPlayer = game.getWinningPlayer().getPlayerNumber();
         if (winningPlayer != getPlayerNumber()) {
             // -- If player looses -- //
-            System.out.println(String.format("player %d has informed player %d that player %d has won",
+            logMessage(String.format("player %d has informed player %d that player %d has won",
             winningPlayer, getPlayerNumber(), winningPlayer));
-            System.out.println(String.format("player %d exits after %d turns",
+            logMessage(String.format("player %d exits after %d turns",
             playerNumber, turns));
-            System.out.println(String.format("player %d hand %s %s %s %s",
+            logMessage(String.format("player %d hand %s %s %s %s",
             playerNumber,
             hand[0].getDenomination().name(), hand[1].getDenomination().name(),
             hand[2].getDenomination().name(),hand[3].getDenomination().name()));
+        }
+        try {
+            if (fw != null) {
+                fw.close();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 }
