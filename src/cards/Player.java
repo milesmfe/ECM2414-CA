@@ -259,7 +259,7 @@ public class Player extends Thread {
                 atomicPlayAction(leftDeck, rightDeck);
                 // -- If player wins -- //
                 if (checkHand()) {
-                    game.declareWinnerAs(playerNumber);
+                    game.declareWinnerAs(this);
                     System.out.println(String.format("player %d wins", playerNumber));
                     System.out.println(String.format("player %d final hand %s %s %s %s",
                     playerNumber,

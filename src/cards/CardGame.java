@@ -1,11 +1,12 @@
 package cards;
 
-import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Scanner;
 
 /**
  * CardGame class.
@@ -47,8 +48,7 @@ public class CardGame {
             playerList.add(new Player(this));
             deckList.add(new CardDeck());
         }
-        validatePack(pn);
-        pack = getPackFrom(pn);
+        getPackFrom(pn);
     }
 
 
@@ -76,16 +76,20 @@ public class CardGame {
             deckList.add(new CardDeck());
         }
         for (int i = 0; i < 8*n; i++) {
-            /**
-             * Once file loaded packs are implemented replace
-             * line so that the next card in the file pack is
-             * appended.
-             */
             pack.add(new Card());
         }
     }
 
 
+    /**
+     * generatePackFile method. generates a pack file from this game's pack.
+     * 
+     * @author Miles Edwards
+     * @version 1.0
+     * 
+     * @param n file name.
+     * 
+     */
     public void generatePackFile(String n) {
         try {
             FileWriter fw = new FileWriter(String.format("src/packs/%s.txt", n));
@@ -100,67 +104,72 @@ public class CardGame {
 
 
     /**
-     * getPackFrom generates a pack of cards from a given file.
+     * getPackFrom method. generates a pack of cards from a given file.
      * 
-     * @author Miles Edwards
      * @author Shuhui Chen
-     * @version 1.1
+     * @author Miles Edwards
+     * @version 1.2
      * 
      * @param n file name.
      * 
      */
-    private ArrayList<Card> getPackFrom(String n) {
-        /**
-         * Call validate pack.
-         * Read from file named "n"
-         * File packFile = new File(n);
-         * Read one line at a time.
-         * Scanner fileScanner = new Scanner(packFile);
-         * Create a Card object with the integer per line.
-         * while (fileScanner.hasNextLine()) { anArray.add(new Card(fileScanner.nextLine())) }
-         * Return a generated ArrayList of these card objects.
-         */
-        File packFile = new File("test-pack-1");
-        Scanner fileScanner = new Scanner (packFile);
-        while (fileScanner.hasNextLine()) { pack.add(new Card(fileScanner.nextLine())); }
-        fileScanner.close();
-        return new ArrayList<Card>();
-    }
-
-
-    /**
-     * validatePack performs validation checks on a given
-     * pack file.
-     * 
-     * @author Miles Edwards
-     * @author Shuhui Chen
-     * @version 1.1
-     * 
-     * @param n file name.
-     * 
-     */
-    private boolean validatePack(String n) {    
-        /**
-         * File packFile = new File(n);
-         * Scanner fileScanner = new Scanner(packFile);
-         * Iterate through each line
-         * while (fileScanner.hasNextLine()) {
-         *          String nextLine = fileScanner.nextLine()
-         *      if (check nextLine is an integer and is in range)
-         *      else { return false }
-         * }
-         * Ensure each line only contains an integer between 1 and 13 (inclusive)
-         * Check that there are 8n lines.
-         */
-        File packFile = new File("test-pack-1");
-        Scanner fileScanner = new Scanner (packFile);
-        while (fileScanner.hasNextLine()) {
-            String nextLine = fileScanner.nextLine();
-            if (nextLine == (int)nextLine && (int)nextLine <= 13 ) {}
-            else {System.out.println("Please use an valid pack file");}
+    private void getPackFrom(String n) {
+        try {
+            // -- Copy each line from the pack file into a list of strings -- //
+            String[] packList = Files.readString(Path.of("src/packs/" + n)).split("\n");
+            // -- Check that pack is correct length -- //
+            if (packList.length != 8*numPlayers) { throw new PackIncorrectLengthException(); }
+            // -- Create new card objects with corresponding denominations & populate pack -- //
+            for (String s : packList) {
+                // -- Check that pack does not contain denominations out of range -- //
+                if(Integer.valueOf(s) <= 13 && Integer.valueOf(s) > 0) {
+                    pack.add(new Card(Integer.valueOf(s)));
+                // -- Throw error if any invalid denominations are found -- //
+                } else { throw new InvalidDenominationException(); }
+            }
+        
+        // -- Error handling -- //
+        } catch (Exception e) {
+            // -- File doesn't exist -- //
+            if (e instanceof NoSuchFileException) {
+                System.out.println("""
+                    ERR: Pack does not exist, remember:\n
+                     1. Pack must be a text (.txt) file
+                     2. Pack should be located at packs/pack-name.txt
+                    \n"""
+                );
+            }
+            // -- File is incorrectly formatted -- //
+            else if (e instanceof NumberFormatException) {
+                System.out.println("""
+                    ERR: Could not read pack: invalid contents. Remember:\n
+                     1. Pack must be a text (.txt) file
+                     2. Pack should only contain positive integers between 1 and 13 (inclusive)
+                     3. Each integer should be on a separate line
+                    \n"""
+                );
+            }
+            // -- Pack contains an incorrect number of cards -- //
+            else if (e instanceof PackIncorrectLengthException) {
+                System.out.println("""
+                    ERR: Pack is not the correct length. Remember:\n
+                     1. Pack must contain (number of players) * 8 cards.
+                     2. Each integer should be on a separate line
+                    \n"""
+                );
+            }
+            // -- Pack contains integers out of range -- //
+            else if (e instanceof InvalidDenominationException) {
+                System.out.println("""
+                    ERR: Pack has integers out of range. Remember:\n
+                     1. Pack should only contain positive integers between 1 and 13 (inclusive)
+                     2. Each integer should be on a separate line
+                    \n"""
+                );
+            }
+            // -- Default response -- //
+            else { e.printStackTrace(); }     
         }
-
-        return true;
     }
 
 
@@ -279,10 +288,8 @@ public class CardGame {
             for (int i = 0; i < numPlayers; i++) {
                 playerList.get(i).locateDecks();
             }
-            status = GameStatus.SETUP_IDLE;
-            return true;
+            status = GameStatus.SETUP_IDLE; return true;
         } catch (Exception e) {
-            // -- Log exception here -- //
             return false;
         }
     }
@@ -371,12 +378,23 @@ public class CardGame {
      * @return true if player p wins, otherwise false.
      * 
      */
-    public boolean declareWinnerAs(int p) {
-        winningPlayer = playerList.get(--p);
+    public boolean declareWinnerAs(Player p) {
+        winningPlayer = p;
         status = GameStatus.GAME_WON;
         return true;
     }
 
+
+     /**
+     * startGame method. Checks that game has been setup and is not
+     * already running. Sets game status to SETUP_ACTIVE. Shuffles
+     * playerList so that player threads start in a random order.
+     * Starts each player thread.
+     * 
+     * @author Miles Edwards
+     * @version 1.0
+     * 
+     */
     public void startGame() {
         if (getStatus() == GameStatus.SETUP_IDLE) {
             status = GameStatus.SETUP_ACTIVE;
@@ -388,15 +406,53 @@ public class CardGame {
     }
 
 
+    /**
+     * quickStart method. Sets up and starts the game automatically.
+     * 
+     * @author Miles Edwards
+     * @version 1.0
+     * 
+     */
     public void quickStart() {
         if (setupGame()) { startGame(); }
     }
 
 
     public static void main(String[] args) throws Exception {
-          /**
+        /**
          * This is the executable method.
          * 
          */
+    }
+
+
+    /**
+     * PackIncorrectLengthException class. Defines an exception for
+     * file input system. Throw when a pack has an incorrect length.
+     * 
+     * @author Miles Edwards
+     * @version 1.0
+     * 
+     */
+    private class PackIncorrectLengthException extends Exception {
+        public PackIncorrectLengthException() {
+            super();
+        }
+    }
+
+
+    /**
+     * InvalidDenominationException class. Defines an exception for
+     * file input system. Throw when a pack contains denominations
+     * out of range (1 to 13 inclusive).
+     * 
+     * @author Miles Edwards
+     * @version 1.0
+     * 
+     */
+    private class InvalidDenominationException extends Exception {
+        public InvalidDenominationException() {
+            super();
+        }
     }
 }
