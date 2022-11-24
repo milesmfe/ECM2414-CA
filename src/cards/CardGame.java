@@ -40,14 +40,7 @@ public class CardGame {
      * 
     */
     public CardGame(int n, String pn) {
-        playerList = new ArrayList<Player>();
-        deckList = new ArrayList<CardDeck>();
-        pack = new ArrayList<Card>();
-
-        for (int i = 0; i < n; i++) {
-            playerList.add(new Player(this, ++playerCount));
-            deckList.add(new CardDeck(this, ++deckCount));
-        }
+        initialise(n);
         // -- Try to get specified pack -- //
         setPackFrom(pn);
     }
@@ -67,6 +60,25 @@ public class CardGame {
      * 
     */
     public CardGame(int n) {
+        initialise(n);
+        // -- Create a pack of random cards -- //
+        for (int i = 0; i < 8*n; i++) {
+            pack.add(new Card());
+        }
+        status = GameStatus.NOT_SETUP_PACK_READY;
+    }
+
+
+    /**
+     * initialise void. Runs compulsory initialisaiton.
+     * Only called by constructor.
+     * 
+     * @author Miles Edwards
+     * @version 1.0
+     * @param n the number of players.
+     * 
+     */
+    private void initialise(int n) {
         playerList = new ArrayList<Player>();
         deckList = new ArrayList<CardDeck>();
         pack = new ArrayList<Card>();
@@ -75,11 +87,6 @@ public class CardGame {
             playerList.add(new Player(this, ++playerCount));
             deckList.add(new CardDeck(this, ++deckCount));
         }
-        // -- Create a pack of random cards -- //
-        for (int i = 0; i < 8*n; i++) {
-            pack.add(new Card());
-        }
-        status = GameStatus.NOT_SETUP_PACK_READY;
     }
 
 
