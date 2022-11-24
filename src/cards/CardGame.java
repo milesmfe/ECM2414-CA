@@ -24,17 +24,70 @@ public class CardGame {
     private Player winningPlayer;
     private GameStatus status = GameStatus.NOT_SETUP_NO_PACK;
 
+
+    /**
+     * PackIncorrectLengthException class.
+     * 
+     * Defines an exception for file input system.
+     * 
+     * Throw when a pack has an incorrect length.
+     * 
+     * @author Miles Edwards
+     * @version 1.0
+     * 
+     */
+    private class PackIncorrectLengthException extends Exception {
+        public PackIncorrectLengthException() {
+            super();
+        }
+    }
+
+
+    /**
+     * InvalidDenominationException class.
+     * 
+     * Defines an exception for file input system.
+     * 
+     * Throw when a pack contains denominations out of range (1 to 13 inclusive).
+     * 
+     * @author Miles Edwards
+     * @version 1.0
+     * 
+     */
+    private class InvalidDenominationException extends Exception {
+        public InvalidDenominationException() {
+            super();
+        }
+    }
+
+
+    /**
+     * EmptyPathException class.
+     * 
+     * Defines an exception for file input system.
+     * 
+     * Throw when a pack name is entered as an empty string.
+     * 
+     * @author Miles Edwards
+     * @version 1.0
+     * 
+     */
+    private class EmptyPathException extends Exception {
+        public EmptyPathException() {
+            super();
+        }
+    }
+
     
     /**
-     * CardGame constructor. Initialises ArrayLists
-     * and proceeds to populate them with players,
-     * decks and cards.
+     * CardGame constructor.
      * 
-     * Use this constructor to play a game with a specific
-     * pack (pack file needed).
+     * Initialises ArrayLists and proceeds to populate them with players, decks and cards.
+     * 
+     * Use this constructor to play a game with a specific pack (pack file name needed).
      * 
      * @param n the number of players.
-     * @param pn the filename of the pack.
+     * @param pn the filename of the pack. Use pn="" to set pack later.
      * @author Miles Edwards
      * @version 1.1
      * 
@@ -47,12 +100,11 @@ public class CardGame {
 
 
     /**
-     * CardGame constructor. Initialises ArrayLists
-     * and proceeds to populate them with players,
-     * decks and cards. 
+     * CardGame constructor.
      * 
-     * Use this constructor to play a game with a random
-     * pack (no pack file needed).
+     * Initialises ArrayLists and proceeds to populate them with players, decks and cards. 
+     * 
+     * Use this constructor to play a game with a random pack (no pack file name needed).
      * 
      * @param n The number of players
      * @author Miles Edwards
@@ -71,6 +123,7 @@ public class CardGame {
 
     /**
      * initialise void. Runs compulsory initialisaiton.
+     * 
      * Only called by constructor.
      * 
      * @author Miles Edwards
@@ -91,10 +144,15 @@ public class CardGame {
 
 
     /**
-     * generatePackFile method. generates a pack file from this game's pack.
-     * Note: will only generate a pack file if the game has not been setup
-     * and a pack is ready (most likely a randomly generated pack).
+     * generatePackFile method.
+     * 
+     * Generates a pack file from this game's pack.
+     * 
+     * Note: will only generate a pack file if the game has not been setup and a pack is
+     * ready (most likely a randomly generated pack).
+     * 
      * If called after setup, pack is already empty so file cannot be generated.
+     * 
      * If called before pack is ready then there is no pack to generate a file from.
      * 
      * @author Miles Edwards
@@ -108,7 +166,8 @@ public class CardGame {
             try {
                 FileWriter fw = new FileWriter(String.format("packs/%s", n));
                 for (Card card : pack) {
-                    fw.write(String.format("%n%d", card.getDenomination().getValue()));
+                    fw.write(String.format("%d", card.getDenomination().getValue()));
+                    if (pack.indexOf(card) != pack.size() - 1) { fw.write(System.lineSeparator()); }
                 }
                 fw.close();
             } catch (IOException e) {
@@ -119,13 +178,15 @@ public class CardGame {
 
 
     /**
-     * setPackFrom method. generates a pack of cards from a given file.
+     * setPackFrom method.
+     * 
+     * Generates a pack of cards from a given file.
      * 
      * @author Shuhui Chen
      * @author Miles Edwards
      * @version 1.2
-     * 
      * @param n file name.
+     * @return flag indicating whether or not pack was set successfully.
      * 
      */
     public boolean setPackFrom(String n) {
@@ -135,7 +196,7 @@ public class CardGame {
                 // -- Copy each line from the pack file into a list of strings -- //
                 String[] packList = Files.readString(Path.of("packs/" + n)).split(System.lineSeparator());
                 // -- Check that pack is correct length -- //
-                if (packList.length < 8*playerCount) { throw new PackIncorrectLengthException(); }
+                if (packList.length != 8*playerCount) { throw new PackIncorrectLengthException(); }
                 // -- Create new card objects with corresponding denominations & populate pack -- //
                 for (int i = 0; i < 8*playerCount; i++) {
                     // -- Check that pack does not contain denominations out of range -- //
@@ -205,6 +266,7 @@ public class CardGame {
                 else { System.out.println("ERR: Unknown error."); }     
             }
         }
+        // -- Notify caller that error was encountered -- //
         return false;
     }
 
@@ -305,9 +367,11 @@ public class CardGame {
     /**
      * getPack method.
      * 
+     * Use for testting.
+     * 
      * @author Miles Edwards
      * @version 1.0
-     * @return the pack for the game.
+     * @return the pack for the game. Will 
      * 
      */
     public ArrayList<Card> getPack() {
@@ -315,19 +379,29 @@ public class CardGame {
     }
 
 
+    /**
+     * getWinningPlayer.
+     * 
+     * @author Miles Edwards
+     * @version 1.0
+     * @return the Player object of the winner.
+     * 
+     */
     public Player getWinningPlayer() {
         return winningPlayer;
     }
 
 
     /**
-     * setupGame method. Calls dealHands and populateDecks.
+     * setupGame method.
+     * 
+     * Calls dealHands and populateDecks.
+     * 
      * Any issue is caught as a generic Exception.
      * 
      * @author Miles Edwards
      * @version 1.0
-     * @return flag indicating whether or not the setup was
-     * successful.
+     * @return flag indicating whether or not the setup was successful.
      * 
      */
     public boolean setupGame() {
@@ -340,18 +414,22 @@ public class CardGame {
                 }
                 status = GameStatus.SETUP_IDLE; return true;
             } catch (Exception e) {
+                // -- There was an error in the code -- //
                 return false;
             }
         }
+        // -- Game was already setup or pack was not ready -- //
         return false;
     }
 
 
     /**
-     * dealHands method. Iterates 4 times representing the size
-     * of each player's hand. Each iteration iterates through
-     * playerList, setting a card for the current index in each
-     * player's hand.
+     * dealHands method.
+     * 
+     * Iterates 4 times representing the size of each player's hand.
+     * 
+     * Each iteration iterates through playerList, setting a card for the current index
+     * in each player's hand.
      * 
      * @author Miles Edwards
      * @version 1.0
@@ -369,9 +447,11 @@ public class CardGame {
 
 
     /**
-     * populateDecks method. Iterates 4 times representing the size
-     * of each deck. Each iteration iterates through deckList,
-     * setting a card for the current index in each pack.
+     * populateDecks method.
+     * 
+     * Iterates 4 times representing the size of each deck.
+     * 
+     * Each iteration iterates through deckList, setting a card for the current index in each pack.
      * 
      * @author Miles Edwards
      * @version 1.0
@@ -421,8 +501,9 @@ public class CardGame {
 
 
     /**
-     * declareWinnerAs method. Player threads should use this to declare
-     * that they have a winning hand.
+     * declareWinnerAs method.
+     * 
+     * Player threads should use this to declare that they have a winning hand.
      * 
      * @author Miles Edwards
      * @version 1.0
@@ -441,9 +522,14 @@ public class CardGame {
 
 
      /**
-     * startGame method. Checks that game has been setup and is not
-     * already running. Sets game status to SETUP_ACTIVE. Shuffles
-     * playerList so that player threads start in a random order.
+     * startGame method.
+     * 
+     * Checks that game has been setup and is not already running.
+     * 
+     * Sets game status to SETUP_ACTIVE.
+     * 
+     * Shuffles playerList so that player threads start in a random order.
+     * 
      * Starts each player thread.
      * 
      * @author Miles Edwards
@@ -474,73 +560,26 @@ public class CardGame {
     }
 
 
-    public static void main(String[] args) throws Exception {
-        /**
-         * This is the executable method.
-         * 
-         */
-        int players = Integer.valueOf(
+    public static void main(String[] args) {
+        try {
+            int players = Integer.valueOf(
             System.console().readLine("Please enter the number of players: ")
-        );
-        while (players < 2) {
-            players = Integer.valueOf(
-                System.console().readLine(
-                    "Sorry, there must be at least 2 players.\nPlease enter the number of players: "
-                )
             );
-        }
-        CardGame game = new CardGame(players, "");
-        String packName = System.console().readLine("Please enter a pack name: ");
-        while (!game.setPackFrom(packName)) {
-            packName = System.console().readLine("Sorry, please try again: ");
-        }
-        game.quickStart();
-    }
-
-
-    /**
-     * PackIncorrectLengthException class. Defines an exception for
-     * file input system. Throw when a pack has an incorrect length.
-     * 
-     * @author Miles Edwards
-     * @version 1.0
-     * 
-     */
-    private class PackIncorrectLengthException extends Exception {
-        public PackIncorrectLengthException() {
-            super();
-        }
-    }
-
-
-    /**
-     * InvalidDenominationException class. Defines an exception for
-     * file input system. Throw when a pack contains denominations
-     * out of range (1 to 13 inclusive).
-     * 
-     * @author Miles Edwards
-     * @version 1.0
-     * 
-     */
-    private class InvalidDenominationException extends Exception {
-        public InvalidDenominationException() {
-            super();
-        }
-    }
-
-
-    /**
-     * EmptyPathException class. Defines an exception for
-     * file input system. Throw when a pack name is entered as an
-     * empty string.
-     * 
-     * @author Miles Edwards
-     * @version 1.0
-     * 
-     */
-    private class EmptyPathException extends Exception {
-        public EmptyPathException() {
-            super();
+            while (players < 2) {
+                players = Integer.valueOf(
+                    System.console().readLine(
+                        "Sorry, there must be at least 2 players.\nPlease enter the number of players: "
+                    )
+                );
+            }
+            CardGame game = new CardGame(players, "");
+            String packName = System.console().readLine("Please enter a pack name: ");
+            while (!game.setPackFrom(packName)) {
+                packName = System.console().readLine("Sorry, please try again: ");
+            }
+            game.quickStart();
+        } catch (Exception e) {
+            // -- Error caught -- //
         }
     }
 }

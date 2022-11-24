@@ -71,6 +71,20 @@ public class CardDeck {
         cards.add(c);
     }
 
+    
+    /**
+     * getCardAt method.
+     * 
+     * @author Miles Edwards
+     * @version 1.0
+     * @param i the index of the card.
+     * @return the card at specified index.
+     * 
+     */
+    public Card getCardAt(int i) {
+        return cards.get(i);
+    }
+
 
     /**
      * popFromTop method. Popps the top card from the deck.
