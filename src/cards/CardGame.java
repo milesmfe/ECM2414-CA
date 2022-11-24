@@ -194,7 +194,7 @@ public class CardGame {
      * @return the current status of this game.
      * 
      */
-    public GameStatus getStatus() {
+    public synchronized GameStatus getStatus() {
         return status;
     }
 
@@ -378,7 +378,7 @@ public class CardGame {
      * @return true if player p wins, otherwise false.
      * 
      */
-    public synchronized boolean declareWinnerAs(Player p) {
+    public boolean declareWinnerAs(Player p) {
         if (status != GameStatus.GAME_WON) {
             winningPlayer = p;
             status = GameStatus.GAME_WON;
@@ -403,6 +403,7 @@ public class CardGame {
             status = GameStatus.SETUP_ACTIVE;
             Collections.shuffle(playerList);
             for (Player player : playerList) {
+                player.setName(String.format("Player-%d-Thread", player.getPlayerNumber()));
                 player.start();
             }
         }
@@ -426,7 +427,7 @@ public class CardGame {
          * This is the executable method.
          * 
          */
-        new CardGame(4, "test-pack-1.txt").quickStart();
+        new CardGame(4, "test-pack-5.txt").quickStart();
     }
 
 

@@ -18,6 +18,7 @@ public class Player extends Thread {
     private Card discard;
     private CardDeck leftDeck;
     private CardDeck rightDeck;
+    private int turns = 0;
 
 
     /**
@@ -164,13 +165,16 @@ public class Player extends Thread {
      * @throws Exception
      * 
      */
-    public void pickCardFrom(CardDeck deck) {
+    private void pickCardFrom(CardDeck deck) {
         findMostVolatileCard();
         int index = 0;
         for (int i = 0; i < 4; i++) { if (hand[i] == discard) { index = i; } }
         Card card = deck.popFromTop();
         if (card.getDenomination() == preferredDenomination) { card.setVolatility(-1); }
         hand[index] = card;
+        // -- Print card draw action -- //
+        System.out.println(String.format("player %d draws a %d from deck %d",
+            getPlayerNumber(), card.getDenomination().getValue(), deck.getDeckNumber()));
     }
 
     
@@ -183,13 +187,27 @@ public class Player extends Thread {
      * @param deck specify the deck to discard a card to.
      * 
      */
-    public void discardCardTo(CardDeck deck) {
+    private void discardCardTo(CardDeck deck) {
         deck.appendToBottom(discard);
+        // -- Print card discard action -- //
+        System.out.println(String.format("player %d discards a %d to deck %d",
+            getPlayerNumber(), discard.getDenomination().getValue(), deck.getDeckNumber()));
         discard = null;
         updateHandVolatility();
     }
 
 
+    /**
+     * atomicPlayAction method. Synchronized atomic action that
+     * performs pickCardFrom and discardCardTo in one method that
+     * each thread can only access one at a time.
+     * 
+     * @author Miles Edwards
+     * @version 1.0
+     * @param left deck to the left of the player.
+     * @param right deck to the right of the player.
+     * 
+     */
     private synchronized void atomicPlayAction(CardDeck left, CardDeck right) {
         pickCardFrom(left);
         discardCardTo(right);
@@ -243,44 +261,63 @@ public class Player extends Thread {
      * 
      */
     @Override
-    public synchronized void run() {
+    public void run() {
         // -- Print hand dealt -- //
         System.out.println(String.format("player %d initial hand %s %s %s %s",
         playerNumber,
         hand[0].getDenomination().name(), hand[1].getDenomination().name(),
         hand[2].getDenomination().name(), hand[3].getDenomination().name()));
         // -- Immediately check whether player has won, if so declare this -- //
-        if (checkHand()) { System.out.println(String.format("Player %d wins", playerNumber)); }
-        // -- Loop game logic until game status changes -- //
-        while (game.getStatus() == GameStatus.SETUP_ACTIVE) {
-            // -- Check that both decks either side of player are not empty -- //
-            if (leftDeck.getDeckSize() > 0 && rightDeck.getDeckSize() > 0) {
-                // -- Game logic -- //
-                atomicPlayAction(leftDeck, rightDeck);
-                // -- If player wins -- //
-                if (checkHand()) {
-                    game.declareWinnerAs(this);
-                    System.out.println(String.format("player %d wins", playerNumber));
-                    System.out.println(String.format("player %d final hand %s %s %s %s",
-                    playerNumber,
-                    hand[0].getDenomination().name(), hand[1].getDenomination().name(),
-                    hand[2].getDenomination().name(),hand[3].getDenomination().name()));
-                }
-                // -- Print current hand -- //
-                System.out.println(String.format("player %d current hand is %s %s %s %s",
+        if (checkHand()) { 
+            if (game.declareWinnerAs(this)) {
+                // -- If player excusively wins -- //
+                System.out.println(String.format("player %d wins", playerNumber));
+                System.out.println(String.format("player %d final hand %s %s %s %s",
                 playerNumber,
                 hand[0].getDenomination().name(), hand[1].getDenomination().name(),
-                hand[2].getDenomination().name(), hand[3].getDenomination().name()));
+                hand[2].getDenomination().name(),hand[3].getDenomination().name()));
+            } else {
+                // -- If another player declared win first -- //
+            }
+        }
+        // -- Loop game logic until game status changes -- //
+        while (game.getStatus() != GameStatus.GAME_WON) {
+            // -- Check that deck to the left is not empty (so a card may be drawn) -- //
+            if (leftDeck.getDeckSize() > 0) {
+                // -- Game logic -- //
+                atomicPlayAction(leftDeck, rightDeck);
+                System.out.println(String.format("player %d current hand is %s %s %s %s",
+                        playerNumber,
+                        hand[0].getDenomination().name(), hand[1].getDenomination().name(),
+                        hand[2].getDenomination().name(),hand[3].getDenomination().name()));
+                turns++;
+                if (checkHand()) {
+                    if (game.declareWinnerAs(this)) {
+                        // -- If player excusively wins -- //
+                        System.out.println(String.format("player %d wins", playerNumber));
+                        System.out.println(String.format("player %d exits after %d turns",
+                        playerNumber, turns));
+                        System.out.println(String.format("player %d final hand %s %s %s %s",
+                        playerNumber,
+                        hand[0].getDenomination().name(), hand[1].getDenomination().name(),
+                        hand[2].getDenomination().name(),hand[3].getDenomination().name()));
+                    } else {
+                        // -- If another player declared win first -- //
+                    }
+                }
             } 
         }
-        if (game.getWinningPlayer() != this) {
-            // -- If player didn't win -- //
-            Player winningPlayer = game.getWinningPlayer();
-            System.out.println(String.format("player %d wins", winningPlayer.getPlayerNumber()));
-                    System.out.println(String.format("player %d final hand %s %s %s %s",
-                    winningPlayer.getPlayerNumber(),
-                    winningPlayer.getCardAt(0).getDenomination().name(), winningPlayer.getCardAt(1).getDenomination().name(),
-                    winningPlayer.getCardAt(2).getDenomination().name(), winningPlayer.getCardAt(3).getDenomination().name()));
+        int winningPlayer = game.getWinningPlayer().getPlayerNumber();
+        if (winningPlayer != getPlayerNumber()) {
+            // -- If player looses -- //
+            System.out.println(String.format("player %d has informed player %d that player %d has won",
+            winningPlayer, getPlayerNumber(), winningPlayer));
+            System.out.println(String.format("player %d exits after %d turns",
+            playerNumber, turns));
+            System.out.println(String.format("player %d hand %s %s %s %s",
+            playerNumber,
+            hand[0].getDenomination().name(), hand[1].getDenomination().name(),
+            hand[2].getDenomination().name(),hand[3].getDenomination().name()));
         }
     }
 }

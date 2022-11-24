@@ -67,7 +67,7 @@ public class CardDeck {
      * @return the number of cards in this deck.
      * 
      */
-    public synchronized int getDeckSize() {
+    public  int getDeckSize() {
         return cards.size();
     }
 
@@ -80,7 +80,7 @@ public class CardDeck {
      * @param c card to be added to the deck.
      * 
      */
-    public synchronized void addCard(Card c) {
+    public  void addCard(Card c) {
         cards.add(c);
     }
 
@@ -95,7 +95,7 @@ public class CardDeck {
      * @return a card popped from the top of the deck.
      * 
      */
-    public synchronized Card popFromTop() {
+    public  Card popFromTop() {
         Card poppedCard = cards.get(cards.size() - 1);
         cards.remove(cards.size() - 1);
         poppedCard.setVolatility(0);
@@ -111,7 +111,7 @@ public class CardDeck {
      * @param card the card to append to the bottom of the deck.
      * 
      */
-    public synchronized void appendToBottom(Card card) {
+    public void appendToBottom(Card card) {
         cards.add(0, card);
     }
 }
