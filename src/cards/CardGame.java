@@ -361,7 +361,7 @@ public class CardGame {
     private void populateDecks() {
         for (int i = 0; i < 4; i++) {  
             for (CardDeck deck : deckList) {
-                Card card = pack.get(pack.size() - 1);
+                final Card card = pack.get(pack.size() - 1);
                 pack.remove(pack.size() - 1);
                 deck.addCard(card);
             }
