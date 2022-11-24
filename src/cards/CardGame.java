@@ -106,7 +106,7 @@ public class CardGame {
     public void generatePackFile(String n) {
         if (status == GameStatus.NOT_SETUP_PACK_READY) {
             try {
-                FileWriter fw = new FileWriter(String.format("src/packs/%s.txt", n));
+                FileWriter fw = new FileWriter(String.format("packs/%s", n));
                 for (Card card : pack) {
                     fw.write(String.format("%d\n", card.getDenomination().getValue()));
                 }
@@ -132,7 +132,7 @@ public class CardGame {
         if (status == GameStatus.NOT_SETUP_NO_PACK) {
             try {
                 // -- Copy each line from the pack file into a list of strings -- //
-                String[] packList = Files.readString(Path.of("src/packs/" + n)).split("\n");
+                String[] packList = Files.readString(Path.of("packs/" + n)).split("\n");
                 // -- Check that pack is correct length -- //
                 if (packList.length != 8*playerCount) { throw new PackIncorrectLengthException(); }
                 // -- Create new card objects with corresponding denominations & populate pack -- //
