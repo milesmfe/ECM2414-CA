@@ -45,8 +45,8 @@ public class CardGame {
         pack = new ArrayList<Card>();
 
         for (int i = 0; i < n; i++) {
-            playerList.add(new Player(this, playerCount++));
-            deckList.add(new CardDeck(this, deckCount++));
+            playerList.add(new Player(this, ++playerCount));
+            deckList.add(new CardDeck(this, ++deckCount));
         }
         // -- Try to get specified pack -- //
         setPackFrom(pn);
