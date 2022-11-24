@@ -16,10 +16,11 @@ import java.util.Collections;
  * 
  */
 public class CardGame {
+    private int playerCount = 0;
+    private int deckCount = 0;
     private ArrayList<Player> playerList;
     private ArrayList<CardDeck> deckList;
     private ArrayList<Card> pack;
-    private int numPlayers = 0;
     private Player winningPlayer;
     private GameStatus status = GameStatus.NOT_SETUP_NO_PACK;
 
@@ -39,14 +40,13 @@ public class CardGame {
      * 
     */
     public CardGame(int n, String pn) {
-        numPlayers = n;
         playerList = new ArrayList<Player>();
         deckList = new ArrayList<CardDeck>();
         pack = new ArrayList<Card>();
 
         for (int i = 0; i < n; i++) {
-            playerList.add(new Player(this));
-            deckList.add(new CardDeck());
+            playerList.add(new Player(this, playerCount++));
+            deckList.add(new CardDeck(this, deckCount++));
         }
         // -- Try to get specified pack -- //
         setPackFrom(pn);
@@ -67,24 +67,28 @@ public class CardGame {
      * 
     */
     public CardGame(int n) {
-        numPlayers = n;
         playerList = new ArrayList<Player>();
         deckList = new ArrayList<CardDeck>();
         pack = new ArrayList<Card>();
 
         for (int i = 0; i < n; i++) {
-            playerList.add(new Player(this));
-            deckList.add(new CardDeck());
+            playerList.add(new Player(this, playerCount++));
+            deckList.add(new CardDeck(this, deckCount++));
         }
         // -- Create a pack of random cards -- //
         for (int i = 0; i < 8*n; i++) {
             pack.add(new Card());
         }
+        status = GameStatus.NOT_SETUP_PACK_READY;
     }
 
 
     /**
      * generatePackFile method. generates a pack file from this game's pack.
+     * Note: will only generate a pack file if the game has not been setup
+     * and a pack is ready (most likely a randomly generated pack).
+     * If called after setup, pack is already empty so file cannot be generated.
+     * If called before pack is ready then there is no pack to generate a file from.
      * 
      * @author Miles Edwards
      * @version 1.0
@@ -93,14 +97,16 @@ public class CardGame {
      * 
      */
     public void generatePackFile(String n) {
-        try {
-            FileWriter fw = new FileWriter(String.format("src/packs/%s.txt", n));
-            for (Card card : pack) {
-                fw.write(String.format("%d\n", card.getDenomination().getValue()));
+        if (status == GameStatus.NOT_SETUP_PACK_READY) {
+            try {
+                FileWriter fw = new FileWriter(String.format("src/packs/%s.txt", n));
+                for (Card card : pack) {
+                    fw.write(String.format("%d\n", card.getDenomination().getValue()));
+                }
+                fw.close();
+            } catch (IOException e) {
+                e.printStackTrace();
             }
-            fw.close();
-        } catch (IOException e) {
-            e.printStackTrace();
         }
     }
 
@@ -121,7 +127,7 @@ public class CardGame {
                 // -- Copy each line from the pack file into a list of strings -- //
                 String[] packList = Files.readString(Path.of("src/packs/" + n)).split("\n");
                 // -- Check that pack is correct length -- //
-                if (packList.length != 8*numPlayers) { throw new PackIncorrectLengthException(); }
+                if (packList.length != 8*playerCount) { throw new PackIncorrectLengthException(); }
                 // -- Create new card objects with corresponding denominations & populate pack -- //
                 for (String s : packList) {
                     // -- Check that pack does not contain denominations out of range -- //
@@ -185,15 +191,28 @@ public class CardGame {
 
 
     /**
-     * getNumPlayers method.
+     * getPlayerCount method.
      * 
      * @author Miles Edwards
      * @version 1.0
-     * @return the number of players in the game.
+     * @return the number of players in this game.
      * 
      */
-    public int getNumPlayers() {
-        return numPlayers;
+    public int getPlayerCount() {
+        return playerCount;
+    }
+
+
+     /**
+     * getDeckCount method.
+     * 
+     * @author Miles Edwards
+     * @version 1.0
+     * @return the number of decks in this game.
+     * 
+     */
+    public int getDeckCount() {
+        return deckCount;
     }
 
 
@@ -297,7 +316,7 @@ public class CardGame {
             try {
                 dealHands();
                 populateDecks();
-                for (int i = 0; i < numPlayers; i++) {
+                for (int i = 0; i < playerCount; i++) {
                     playerList.get(i).locateDecks();
                 }
                 status = GameStatus.SETUP_IDLE; return true;
@@ -374,7 +393,7 @@ public class CardGame {
      * 
      */
     public CardDeck deckRightOf(int p) {
-        if (p == numPlayers) {
+        if (p == playerCount) {
             return deckList.get(0);
         } else {
             return deckList.get(p);

@@ -4,6 +4,7 @@ import org.junit.Test;
 
 import cards.Card;
 import cards.CardDeck;
+import cards.CardGame;
 
 import static org.junit.Assert.*;
 
@@ -18,7 +19,7 @@ public class CardDeckTest {
 
     @Test
     public void testSomething() {
-        CardDeck testDeck = new CardDeck();
+        CardDeck testDeck = new CardDeck(new CardGame(4), 1);
         testDeck.addCard(new Card(1));
         testDeck.addCard(new Card(2));
         testDeck.addCard(new Card(3));

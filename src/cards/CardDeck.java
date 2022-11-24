@@ -12,7 +12,6 @@ import java.util.ArrayList;
  * 
  */
 public class CardDeck {
-    private static int deckCount = 0;
     private int deckNumber;
     private ArrayList<Card> cards;
     
@@ -24,25 +23,13 @@ public class CardDeck {
      * 
      * @author Miles Edwards
      * @version 1.0
+     * @param g indicates the game.
+     * @param n indicates the deck number.
      * 
      */
-    public CardDeck() {
-        deckCount++;
-        deckNumber = deckCount;
+    public CardDeck(CardGame g, int n) {
+        deckNumber = n;
         cards = new ArrayList<Card>();
-    }
-
-
-    /**
-     * getDeckCount method.
-     * 
-     * @author Miles Edwards
-     * @version 1.0
-     * @return the global number of decks.
-     * 
-     */
-    public static int getDeckCount() {
-        return deckCount;
     }
 
 

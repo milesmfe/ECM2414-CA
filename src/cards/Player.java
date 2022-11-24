@@ -10,7 +10,6 @@ package cards;
  * 
  */
 public class Player extends Thread {
-    private static int playerCount = 0;
     private int playerNumber;
     private CardGame game;
     private CardDenomination preferredDenomination;
@@ -29,26 +28,13 @@ public class Player extends Thread {
      * @author Miles Edwards
      * @version 1.0
      * @param g indicates the game this player is in.
+     * @param n indicates the player number.
      * 
      */
-    public Player(CardGame g) {
-        playerCount++;
-        playerNumber = playerCount;
+    public Player(CardGame g, int n) {
+        playerNumber = n;
         preferredDenomination = CardDenomination.valueOf(playerNumber);
         game = g;
-    }
-
-
-    /**
-     * getPlayerCount method.
-     * 
-     * @author Miles Edwards
-     * @version 1.0
-     * @return the global number of players.
-     * 
-     */
-    public static int getPlayerCount() {
-        return playerCount;
     }
 
 

@@ -19,7 +19,7 @@ public class PlayerTest {
 
     @Test
     public void testSetCardAt() {
-        Player testPlayer = new Player(null);
+        Player testPlayer = new Player(null, 1);
         Card testCardACE = new Card(1);
         Card testCardTWO = new Card(2);
         Card testCardTHREE = new Card(3);
