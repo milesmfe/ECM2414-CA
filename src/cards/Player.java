@@ -128,7 +128,7 @@ public class Player extends Thread {
      * @return flag indicating whether or not this player has won.
      * 
      */
-    public boolean checkHand() {
+    private boolean checkHand() {
         CardDenomination denomination = hand[0].getDenomination();
         for (int i = 1; i < 4; i++) {
             if (hand[i].getDenomination() != denomination) {
@@ -209,7 +209,7 @@ public class Player extends Thread {
      * @version 1.0
      * 
      */
-    public void findMostVolatileCard() {
+    private void findMostVolatileCard() {
         int index = 0;
         for (int i = 1; i < 4; i++) {
             if (hand[i].getVolatility() > hand[index].getVolatility()) {
@@ -228,7 +228,7 @@ public class Player extends Thread {
      * @version 1.0
      * 
      */
-    public void updateHandVolatility() {
+    private void updateHandVolatility() {
         for (int i = 0; i < 4; i++) {
             if (hand[i].getDenomination() != preferredDenomination) {
                 hand[i].incrementVolatility();
