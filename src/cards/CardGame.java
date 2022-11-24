@@ -21,7 +21,7 @@ public class CardGame {
     private ArrayList<Card> pack;
     private int numPlayers = 0;
     private Player winningPlayer;
-    private GameStatus status;
+    private GameStatus status = GameStatus.NOT_SETUP_NO_PACK;
 
     
     /**
@@ -48,7 +48,8 @@ public class CardGame {
             playerList.add(new Player(this));
             deckList.add(new CardDeck());
         }
-        getPackFrom(pn);
+        // -- Try to get specified pack -- //
+        setPackFrom(pn);
     }
 
 
@@ -75,6 +76,7 @@ public class CardGame {
             playerList.add(new Player(this));
             deckList.add(new CardDeck());
         }
+        // -- Create a pack of random cards -- //
         for (int i = 0; i < 8*n; i++) {
             pack.add(new Card());
         }
@@ -104,7 +106,7 @@ public class CardGame {
 
 
     /**
-     * getPackFrom method. generates a pack of cards from a given file.
+     * setPackFrom method. generates a pack of cards from a given file.
      * 
      * @author Shuhui Chen
      * @author Miles Edwards
@@ -113,63 +115,72 @@ public class CardGame {
      * @param n file name.
      * 
      */
-    private void getPackFrom(String n) {
-        try {
-            // -- Copy each line from the pack file into a list of strings -- //
-            String[] packList = Files.readString(Path.of("src/packs/" + n)).split("\n");
-            // -- Check that pack is correct length -- //
-            if (packList.length != 8*numPlayers) { throw new PackIncorrectLengthException(); }
-            // -- Create new card objects with corresponding denominations & populate pack -- //
-            for (String s : packList) {
-                // -- Check that pack does not contain denominations out of range -- //
-                if(Integer.valueOf(s) <= 13 && Integer.valueOf(s) > 0) {
-                    pack.add(new Card(Integer.valueOf(s)));
-                // -- Throw error if any invalid denominations are found -- //
-                } else { throw new InvalidDenominationException(); }
+    public boolean setPackFrom(String n) {
+        if (status == GameStatus.NOT_SETUP_NO_PACK) {
+            try {
+                // -- Copy each line from the pack file into a list of strings -- //
+                String[] packList = Files.readString(Path.of("src/packs/" + n)).split("\n");
+                // -- Check that pack is correct length -- //
+                if (packList.length != 8*numPlayers) { throw new PackIncorrectLengthException(); }
+                // -- Create new card objects with corresponding denominations & populate pack -- //
+                for (String s : packList) {
+                    // -- Check that pack does not contain denominations out of range -- //
+                    if(Integer.valueOf(s) <= 13 && Integer.valueOf(s) > 0) {
+                        pack.add(new Card(Integer.valueOf(s)));
+                    // -- Throw error if any invalid denominations are found -- //
+                    } else { throw new InvalidDenominationException(); }
+                }
+                // -- No Errors -- //
+                status = GameStatus.NOT_SETUP_PACK_READY;
+            
+            // -- Error handling -- //
+            } catch (Exception e) {
+                // -- File doesn't exist -- //
+                if (e instanceof NoSuchFileException) {
+                    System.out.println("""
+                        \n
+                        ERR: Pack does not exist, remember:\n
+                         1. Pack must be a text (.txt) file
+                         2. Pack should be located at packs/pack-name.txt
+                        \n"""
+                    );
+                }
+                // -- File is incorrectly formatted -- //
+                else if (e instanceof NumberFormatException) {
+                    System.out.println("""
+                        \n
+                        ERR: Could not read pack: invalid contents. Remember:\n
+                         1. Pack must be a text (.txt) file
+                         2. Pack should only contain positive integers between 1 and 13 (inclusive)
+                         3. Each integer should be on a separate line
+                        \n"""
+                    );
+                }
+                // -- Pack contains an incorrect number of cards -- //
+                else if (e instanceof PackIncorrectLengthException) {
+                    System.out.println("""
+                        \n
+                        ERR: Pack is not the correct length. Remember:\n
+                         1. Pack must contain (number of players) * 8 cards.
+                         2. Each integer should be on a separate line
+                        \n"""
+                    );
+                }
+                // -- Pack contains integers out of range -- //
+                else if (e instanceof InvalidDenominationException) {
+                    System.out.println("""
+                        \n
+                        ERR: Pack has integers out of range. Remember:\n
+                         1. Pack should only contain positive integers between 1 and 13 (inclusive)
+                         2. Each integer should be on a separate line
+                        \n"""
+                    );
+                }
+                // -- Default response to error -- //
+                else { e.printStackTrace(); }     
             }
-        
-        // -- Error handling -- //
-        } catch (Exception e) {
-            // -- File doesn't exist -- //
-            if (e instanceof NoSuchFileException) {
-                System.out.println("""
-                    ERR: Pack does not exist, remember:\n
-                     1. Pack must be a text (.txt) file
-                     2. Pack should be located at packs/pack-name.txt
-                    \n"""
-                );
-            }
-            // -- File is incorrectly formatted -- //
-            else if (e instanceof NumberFormatException) {
-                System.out.println("""
-                    ERR: Could not read pack: invalid contents. Remember:\n
-                     1. Pack must be a text (.txt) file
-                     2. Pack should only contain positive integers between 1 and 13 (inclusive)
-                     3. Each integer should be on a separate line
-                    \n"""
-                );
-            }
-            // -- Pack contains an incorrect number of cards -- //
-            else if (e instanceof PackIncorrectLengthException) {
-                System.out.println("""
-                    ERR: Pack is not the correct length. Remember:\n
-                     1. Pack must contain (number of players) * 8 cards.
-                     2. Each integer should be on a separate line
-                    \n"""
-                );
-            }
-            // -- Pack contains integers out of range -- //
-            else if (e instanceof InvalidDenominationException) {
-                System.out.println("""
-                    ERR: Pack has integers out of range. Remember:\n
-                     1. Pack should only contain positive integers between 1 and 13 (inclusive)
-                     2. Each integer should be on a separate line
-                    \n"""
-                );
-            }
-            // -- Default response -- //
-            else { e.printStackTrace(); }     
         }
+        return false;
     }
 
 
@@ -282,16 +293,19 @@ public class CardGame {
      * 
      */
     public boolean setupGame() {
-        try {
-            dealHands();
-            populateDecks();
-            for (int i = 0; i < numPlayers; i++) {
-                playerList.get(i).locateDecks();
+        if (status == GameStatus.NOT_SETUP_PACK_READY) {
+            try {
+                dealHands();
+                populateDecks();
+                for (int i = 0; i < numPlayers; i++) {
+                    playerList.get(i).locateDecks();
+                }
+                status = GameStatus.SETUP_IDLE; return true;
+            } catch (Exception e) {
+                return false;
             }
-            status = GameStatus.SETUP_IDLE; return true;
-        } catch (Exception e) {
-            return false;
         }
+        return false;
     }
 
 

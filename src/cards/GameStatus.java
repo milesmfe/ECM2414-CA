@@ -9,7 +9,8 @@ package cards;
  * 
  */
 public enum GameStatus {
-    NOT_SETUP,
+    NOT_SETUP_NO_PACK,
+    NOT_SETUP_PACK_READY,
     SETUP_IDLE,
     SETUP_ACTIVE,
     GAME_WON;
