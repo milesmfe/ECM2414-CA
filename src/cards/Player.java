@@ -22,7 +22,9 @@ public class Player extends Thread {
     private CardDeck rightDeck;
     private int turns = 0;
     private File outputFile;
+    private File deckOutPutFile;
     FileWriter fw = null;
+    FileWriter pfw = null;
 
 
     /**
@@ -165,7 +167,8 @@ public class Player extends Thread {
         hand[index] = card;
         // -- Print card draw action -- //
         logMessage(String.format("player %d draws a %d from deck %d",
-            getPlayerNumber(), card.getDenomination().getValue(), deck.getDeckNumber()));
+            getPlayerNumber(), card.getDenomination().getValue(), deck.getDeckNumber()),
+            fw);
     }
 
     
@@ -182,7 +185,8 @@ public class Player extends Thread {
         deck.appendToBottom(discard);
         // -- Print card discard action -- //
         logMessage(String.format("player %d discards a %d to deck %d",
-            getPlayerNumber(), discard.getDenomination().getValue(), deck.getDeckNumber()));
+            getPlayerNumber(), discard.getDenomination().getValue(), deck.getDeckNumber()),
+            fw);
         discard = null;
         updateHandVolatility();
     }
@@ -249,11 +253,12 @@ public class Player extends Thread {
      * @author Miles Edwards
      * @version 1.0 
      * @param msg the message to log
+     * @param f the filewriter
      * 
      */
-    private void logMessage(String msg) {
+    private void logMessage(String msg, FileWriter f) {
         try {
-            fw.write(System.lineSeparator() + msg);
+            f.write(System.lineSeparator() + msg);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -273,16 +278,19 @@ public class Player extends Thread {
     @Override
     public void run() {
         outputFile = new File(String.format("results/player_%d.txt", getPlayerNumber()));
+        deckOutPutFile = new File(String.format("results/deck_%d.txt", leftDeck.getDeckNumber()));
         String modifier = "_copy";
         while (outputFile.exists()) {
             final String modDir = outputFile.getPath().replaceFirst("results", "results" + modifier);
-            outputFile = new File(String.format("%s/player_%d.txt", 
-            modDir, getPlayerNumber()));
+            final String modDeckDir = deckOutPutFile.getPath().replaceFirst("results", "results" + modifier);
+            outputFile = new File(modDir);
+            deckOutPutFile = new File(modDeckDir);
         }
         outputFile.getParentFile().mkdirs();
-        System.out.println(outputFile.getPath());
+        deckOutPutFile.getParentFile().mkdirs();
         try {
             fw = new FileWriter(outputFile, true);
+            pfw = new FileWriter(deckOutPutFile, true);
         } catch (IOException e1) {
             e1.printStackTrace();
         }
@@ -290,16 +298,18 @@ public class Player extends Thread {
         logMessage(String.format("player %d initial hand %s %s %s %s",
         playerNumber,
         hand[0].getDenomination().name(), hand[1].getDenomination().name(),
-        hand[2].getDenomination().name(), hand[3].getDenomination().name()));
+        hand[2].getDenomination().name(), hand[3].getDenomination().name()),
+        fw);
         // -- Immediately check whether player has won, if so declare this -- //
         if (checkHand()) { 
             if (game.declareWinnerAs(this)) {
                 // -- If player excusively wins -- //
-                logMessage(String.format("player %d wins", playerNumber));
+                logMessage(String.format("player %d wins", playerNumber), fw);
                 logMessage(String.format("player %d final hand %s %s %s %s",
                 playerNumber,
                 hand[0].getDenomination().name(), hand[1].getDenomination().name(),
-                hand[2].getDenomination().name(),hand[3].getDenomination().name()));
+                hand[2].getDenomination().name(),hand[3].getDenomination().name()),
+                fw);
             } else {
                 // -- If another player declared win first -- //
             }
@@ -313,39 +323,54 @@ public class Player extends Thread {
                 logMessage(String.format("player %d current hand is %s %s %s %s",
                         playerNumber,
                         hand[0].getDenomination().name(), hand[1].getDenomination().name(),
-                        hand[2].getDenomination().name(),hand[3].getDenomination().name()));
+                        hand[2].getDenomination().name(),hand[3].getDenomination().name()),
+                        fw);
                 turns++;
                 if (checkHand()) {
                     if (game.declareWinnerAs(this)) {
                         // -- If player excusively wins -- //
-                        logMessage(String.format("player %d wins", playerNumber));
+                        logMessage(String.format("player %d wins", playerNumber),
+                        fw);
                         logMessage(String.format("player %d exits after %d turns",
-                        playerNumber, turns));
+                        playerNumber, turns),
+                        fw);
                         logMessage(String.format("player %d final hand %s %s %s %s",
                         playerNumber,
                         hand[0].getDenomination().name(), hand[1].getDenomination().name(),
-                        hand[2].getDenomination().name(),hand[3].getDenomination().name()));
+                        hand[2].getDenomination().name(),hand[3].getDenomination().name()),
+                        fw);
                     } else {
                         // -- If another player declared win first -- //
                     }
                 }
             } 
         }
+        String leftDeckContents = "";
+        for (int i = 0; i < leftDeck.getDeckSize(); i++) {
+            leftDeckContents = leftDeckContents + " " + leftDeck.getCardAt(i).getDenomination().name();
+        }
+        logMessage(String.format("deck %d contents: %s",
+        leftDeck.getDeckNumber(), leftDeckContents),
+        pfw);
         int winningPlayer = game.getWinningPlayer().getPlayerNumber();
         if (winningPlayer != getPlayerNumber()) {
             // -- If player looses -- //
             logMessage(String.format("player %d has informed player %d that player %d has won",
-            winningPlayer, getPlayerNumber(), winningPlayer));
+            winningPlayer, getPlayerNumber(), winningPlayer),
+            fw);
             logMessage(String.format("player %d exits after %d turns",
-            playerNumber, turns));
+            playerNumber, turns),
+            fw);
             logMessage(String.format("player %d hand %s %s %s %s",
             playerNumber,
             hand[0].getDenomination().name(), hand[1].getDenomination().name(),
-            hand[2].getDenomination().name(),hand[3].getDenomination().name()));
+            hand[2].getDenomination().name(),hand[3].getDenomination().name()),
+            fw);
         }
         try {
             if (fw != null) {
                 fw.close();
+                pfw.close();
             }
         } catch (IOException e) {
             e.printStackTrace();
