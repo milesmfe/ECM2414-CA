@@ -42,7 +42,7 @@ public class CardGame {
     public CardGame(int n, String pn) {
         initialise(n);
         // -- Try to get specified pack -- //
-        setPackFrom(pn);
+        if (pn != "") { setPackFrom(pn); }
     }
 
 
@@ -108,7 +108,7 @@ public class CardGame {
             try {
                 FileWriter fw = new FileWriter(String.format("packs/%s", n));
                 for (Card card : pack) {
-                    fw.write(String.format("%d\n", card.getDenomination().getValue()));
+                    fw.write(String.format("%n%d", card.getDenomination().getValue()));
                 }
                 fw.close();
             } catch (IOException e) {
@@ -131,20 +131,22 @@ public class CardGame {
     public boolean setPackFrom(String n) {
         if (status == GameStatus.NOT_SETUP_NO_PACK) {
             try {
+                if (n.length() == 0) { throw new EmptyPathException(); }
                 // -- Copy each line from the pack file into a list of strings -- //
-                String[] packList = Files.readString(Path.of("packs/" + n)).split("\n");
+                String[] packList = Files.readString(Path.of("packs/" + n)).split(System.lineSeparator());
                 // -- Check that pack is correct length -- //
-                if (packList.length != 8*playerCount) { throw new PackIncorrectLengthException(); }
+                if (packList.length < 8*playerCount) { throw new PackIncorrectLengthException(); }
                 // -- Create new card objects with corresponding denominations & populate pack -- //
-                for (String s : packList) {
+                for (int i = 0; i < 8*playerCount; i++) {
                     // -- Check that pack does not contain denominations out of range -- //
-                    if(Integer.valueOf(s) <= 13 && Integer.valueOf(s) > 0) {
-                        pack.add(new Card(Integer.valueOf(s)));
+                    if(Integer.valueOf(packList[i]) <= 13 && Integer.valueOf(packList[i]) > 0) {
+                        pack.add(new Card(Integer.valueOf(packList[i])));
                     // -- Throw error if any invalid denominations are found -- //
-                    } else { throw new InvalidDenominationException(); }
+                    } else { throw new InvalidDenominationException(); }     
                 }
                 // -- No Errors -- //
                 status = GameStatus.NOT_SETUP_PACK_READY;
+                return true;
             
             // -- Error handling -- //
             } catch (Exception e) {
@@ -189,8 +191,18 @@ public class CardGame {
                         \n"""
                     );
                 }
+                // -- Pack name is an empty string -- //
+                else if (e instanceof EmptyPathException) {
+                    System.out.println("""
+                        \n
+                        ERR: Pack name was an empty string. Remember:\n
+                         1. Enter the name of the pack you would like to use for this game
+                         2. Enter the file extention (.txt) after the name without a space
+                        \n"""
+                    );
+                }
                 // -- Default response to error -- //
-                else { e.printStackTrace(); }     
+                else { System.out.println("ERR: Unknown error."); }     
             }
         }
         return false;
@@ -467,7 +479,22 @@ public class CardGame {
          * This is the executable method.
          * 
          */
-        new CardGame(4, "test-pack-5.txt").quickStart();
+        int players = Integer.valueOf(
+            System.console().readLine("Please enter the number of players: ")
+        );
+        while (players < 2) {
+            players = Integer.valueOf(
+                System.console().readLine(
+                    "Sorry, there must be at least 2 players.\nPlease enter the number of players: "
+                )
+            );
+        }
+        CardGame game = new CardGame(players, "");
+        String packName = System.console().readLine("Please enter a pack name: ");
+        while (!game.setPackFrom(packName)) {
+            packName = System.console().readLine("Sorry, please try again: ");
+        }
+        game.quickStart();
     }
 
 
@@ -497,6 +524,22 @@ public class CardGame {
      */
     private class InvalidDenominationException extends Exception {
         public InvalidDenominationException() {
+            super();
+        }
+    }
+
+
+    /**
+     * EmptyPathException class. Defines an exception for
+     * file input system. Throw when a pack name is entered as an
+     * empty string.
+     * 
+     * @author Miles Edwards
+     * @version 1.0
+     * 
+     */
+    private class EmptyPathException extends Exception {
+        public EmptyPathException() {
             super();
         }
     }
