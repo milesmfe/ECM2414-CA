@@ -18,7 +18,7 @@ import static org.junit.Assert.*;
 public class CardDeckTest {
 
     @Test
-    public void testSomething() {
+    public void testAddCard() {
         CardDeck testDeck = new CardDeck(new CardGame(4), 1);
         testDeck.addCard(new Card(1));
         testDeck.addCard(new Card(2));
